@@ -3,15 +3,14 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import '@/assets/tailwind.css';
 
-// Follow the OS light/dark preference by toggling the `.dark` class that the
-// shadcn theme tokens key off of. Phase 2 will replace this with an explicit
-// theme setting; for now the placeholder simply mirrors the system.
-const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-function syncTheme() {
-  document.documentElement.classList.toggle('dark', darkQuery.matches);
-}
-syncTheme();
-darkQuery.addEventListener('change', syncTheme);
+// One-shot pre-paint default: match the OS preference so the very first frame
+// isn't a light flash on a dark system. This does NOT install a listener — the
+// real, setting-aware theming (including 'light'/'dark' overrides and live OS
+// changes) is owned by `useTheme` once the stored theme loads.
+document.documentElement.classList.toggle(
+  'dark',
+  window.matchMedia('(prefers-color-scheme: dark)').matches,
+);
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element #root not found');

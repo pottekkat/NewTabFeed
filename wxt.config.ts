@@ -12,9 +12,29 @@ export default defineConfig({
     name: 'NewTabFeed',
     description:
       'A local-first RSS reader in your new tab. Your feeds, on your device — no accounts, no cloud, no ads.',
-    permissions: ['storage', 'alarms', 'unlimitedStorage', 'favicon', 'tabs'],
+    // `scripting` is needed to register the feed-discovery content script at
+    // runtime (see lib/discovery/registration.ts). `<all_urls>` stays OPTIONAL
+    // (below), granted once at onboarding — never required at install.
+    permissions: [
+      'storage',
+      'alarms',
+      'unlimitedStorage',
+      'favicon',
+      'tabs',
+      'scripting',
+    ],
     optional_host_permissions: ['<all_urls>'],
     action: {},
+  },
+  hooks: {
+    // The discovery content script uses `registration: 'runtime'`, which makes
+    // WXT add its `<all_urls>` match to `host_permissions` (a REQUIRED host
+    // permission → install-time host warning). Our permission model keeps host
+    // access optional and runtime-requested, so drop any required host
+    // permissions WXT injected. `optional_host_permissions` is untouched.
+    'build:manifestGenerated'(_wxt, manifest) {
+      delete manifest.host_permissions;
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],

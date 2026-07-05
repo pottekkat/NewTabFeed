@@ -11,6 +11,7 @@ import { listFeeds } from '@/lib/db';
 import { refreshAllFeeds, subscribe, unsubscribe } from '@/lib/feeds';
 import { exportOpml, importOpml } from '@/lib/opml';
 import { refreshIntervalMinutes } from '@/lib/settings';
+import { getDiscoveredFeeds, probeOrigin } from '@/lib/discovery';
 
 /** Notify all open pages that stored feeds/items changed. Best-effort. */
 export async function broadcastFeedsUpdated(): Promise<void> {
@@ -55,6 +56,14 @@ async function handleRequest(message: RequestMessage): Promise<AnyResponse> {
     case 'export-opml': {
       const feeds = await listFeeds();
       return { ok: true, data: { xml: exportOpml(feeds) } };
+    }
+    case 'get-discovered': {
+      const feeds = await getDiscoveredFeeds(message.tabId);
+      return { ok: true, data: { feeds } };
+    }
+    case 'probe-origin': {
+      const feeds = await probeOrigin(message.origin);
+      return { ok: true, data: { feeds } };
     }
   }
 }

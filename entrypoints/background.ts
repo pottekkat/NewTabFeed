@@ -9,7 +9,12 @@ import {
 import { refreshAllFeeds } from '@/lib/feeds';
 import { broadcastFeedsUpdated } from '@/lib/message-handler';
 import { refreshIntervalMinutes } from '@/lib/settings';
-import type { RequestMessage } from '@/lib/messages';
+import {
+  syncDiscoveryRegistration,
+  recordDiscoveredFeeds,
+  clearDiscovered,
+} from '@/lib/discovery';
+import { isFeedsFound, type RequestMessage } from '@/lib/messages';
 
 // Service worker: the domain core's only host in production. It stays thin and
 // delegates everything to lib/.
@@ -24,11 +29,35 @@ export default defineBackground(() => {
   // Keep the periodic refresh alarm in sync on install, startup, and setting change.
   browser.runtime.onInstalled.addListener(() => {
     void ensureRefreshAlarm();
+    void syncDiscoveryRegistration();
   });
   browser.runtime.onStartup.addListener(() => {
     void ensureRefreshAlarm();
+    void syncDiscoveryRegistration();
   });
   watchRefreshInterval();
+
+  // Register/unregister the discovery content script as host access is granted
+  // or revoked (onboarding grants it). Registration lives in the scripting API,
+  // not the manifest, so `<all_urls>` stays an optional permission.
+  browser.permissions.onAdded.addListener(() => {
+    void syncDiscoveryRegistration();
+  });
+  browser.permissions.onRemoved.addListener(() => {
+    void syncDiscoveryRegistration();
+  });
+
+  // Badge is per-tab and reflects the current page. Clear it the moment a tab
+  // starts navigating (the freshly-loaded page re-reports at document_idle) and
+  // when a tab closes, so a stale count can't linger.
+  browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    if (changeInfo.status === 'loading') {
+      void clearDiscovered(tabId);
+    }
+  });
+  browser.tabs.onRemoved.addListener((tabId) => {
+    void clearDiscovered(tabId);
+  });
 
   // Periodic refresh: only stale feeds, honoring backoff.
   browser.alarms.onAlarm.addListener((alarm) => {
@@ -44,9 +73,19 @@ export default defineBackground(() => {
     })();
   });
 
-  // Typed request/response channel from newtab/popup. `return true` keeps the
-  // message channel open for the async response (per MV3 rules).
-  browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  // Typed request/response channel from newtab/popup, plus the fire-and-forget
+  // `feeds-found` message from the discovery content script.
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // Content-script discovery: needs sender.tab.id, no response expected.
+    if (isFeedsFound(message)) {
+      void recordDiscoveredFeeds(
+        sender.tab?.id,
+        message.feeds,
+        message.pageUrl,
+      );
+      return false;
+    }
+    // `return true` keeps the channel open for the async response (per MV3 rules).
     void (async () => {
       sendResponse(await dispatch(message as RequestMessage));
     })();
