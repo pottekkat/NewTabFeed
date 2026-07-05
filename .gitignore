@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.output/
+.wxt/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Environment
+.env
+.env.*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Internal working docs and AI tooling (not part of the open-source release)
+CLAUDE.md
+TODO.md
+NOTES.md
+PLAN.md
+skills/
+.claude/

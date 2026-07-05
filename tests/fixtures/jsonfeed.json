@@ -1,0 +1,35 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "JSON Diaries",
+  "home_page_url": "https://json.example.com/",
+  "feed_url": "https://json.example.com/feed.json",
+  "description": "A feed made of braces",
+  "authors": [
+    { "name": "Tim Berners-Lee", "url": "https://json.example.com/tim" }
+  ],
+  "items": [
+    {
+      "id": "https://json.example.com/1",
+      "url": "https://json.example.com/posts/hello",
+      "title": "Hello, JSON Feed",
+      "content_html": "<p>Structured <em>and</em> simple.</p>",
+      "summary": "A first post.",
+      "image": "https://json.example.com/img/hello.png",
+      "date_published": "2024-10-03T10:00:00Z",
+      "authors": [{ "name": "Tim Berners-Lee" }]
+    },
+    {
+      "id": "2",
+      "url": "https://json.example.com/posts/second",
+      "title": "Second Entry",
+      "content_text": "Plain text only.",
+      "date_published": "2024-10-02T10:00:00Z",
+      "attachments": [
+        {
+          "url": "https://json.example.com/img/second.jpg",
+          "mime_type": "image/jpeg"
+        }
+      ]
+    }
+  ]
+}

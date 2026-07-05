@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Gadgets &amp; Gizmos</title>
+    <link>https://example.com</link>
+    <description>Reviews of things with buttons</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 02 Oct 2024 15:00:00 GMT</lastBuildDate>
+    <item>
+      <title>The Best &amp; Worst Keyboards of 2024</title>
+      <link>https://example.com/posts/keyboards-2024</link>
+      <guid isPermaLink="false">tag:example.com,2024:/posts/keyboards-2024</guid>
+      <pubDate>Wed, 02 Oct 2024 13:00:00 GMT</pubDate>
+      <dc:creator>Ada Lovelace</dc:creator>
+      <description>A roundup of mechanical keyboards.</description>
+      <content:encoded><![CDATA[<p>Here is the <strong>full</strong> review with <a href="https://example.com/more">more detail</a>.</p>]]></content:encoded>
+      <media:content url="https://cdn.example.com/keyboards-full.jpg" medium="image" width="1200" height="630">
+        <media:thumbnail url="https://cdn.example.com/keyboards-thumb.jpg" width="320" height="180"/>
+      </media:content>
+      <enclosure url="https://cdn.example.com/keyboards.mp3" length="10240000" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Mouse Shootout</title>
+      <link>https://example.com/posts/mouse-shootout</link>
+      <guid isPermaLink="true">https://example.com/posts/mouse-shootout</guid>
+      <pubDate>Tue, 01 Oct 2024 09:30:00 GMT</pubDate>
+      <description>Which mouse wins?</description>
+      <enclosure url="https://cdn.example.com/mouse-hero.png" length="204800" type="image/png"/>
+    </item>
+  </channel>
+</rss>

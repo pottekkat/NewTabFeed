@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Relative Rambles</title>
+    <link>https://relative.example.com/blog/</link>
+    <description>Everything here is relative</description>
+    <item>
+      <title>A Relative Post</title>
+      <link>/blog/relative-post</link>
+      <guid isPermaLink="false">relative-post-1</guid>
+      <pubDate>Mon, 30 Sep 2024 12:00:00 GMT</pubDate>
+      <description>The link and image are relative paths.</description>
+      <media:thumbnail url="/images/relative-thumb.jpg"/>
+    </item>
+    <item>
+      <title>Another Relative Post</title>
+      <link>second-post</link>
+      <guid isPermaLink="false">relative-post-2</guid>
+      <pubDate>Sun, 29 Sep 2024 12:00:00 GMT</pubDate>
+      <description>A path relative to the channel link.</description>
+    </item>
+  </channel>
+</rss>

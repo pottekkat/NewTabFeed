@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <title>Field Notes</title>
+  <subtitle>Notes from the field</subtitle>
+  <link href="https://blog.example.org/" rel="alternate"/>
+  <link href="https://blog.example.org/atom.xml" rel="self"/>
+  <id>https://blog.example.org/</id>
+  <updated>2024-10-02T18:00:00Z</updated>
+  <author><name>Grace Hopper</name></author>
+  <entry>
+    <title>On Compilers &amp; Coffee</title>
+    <link href="https://blog.example.org/compilers-and-coffee" rel="alternate"/>
+    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <published>2024-10-02T17:00:00Z</published>
+    <updated>2024-10-02T17:30:00Z</updated>
+    <author><name>Grace Hopper</name></author>
+    <summary>A short note.</summary>
+    <content type="html">&lt;p&gt;The &lt;em&gt;long&lt;/em&gt; version.&lt;/p&gt;</content>
+    <media:thumbnail url="https://blog.example.org/img/compilers.jpg"/>
+  </entry>
+  <entry>
+    <title>Untitled Thoughts</title>
+    <link href="https://blog.example.org/untitled-thoughts" rel="alternate"/>
+    <id>urn:uuid:2225c695-cfb8-4ebb-bbbb-80da344efa6b</id>
+    <updated>2024-10-01T12:00:00Z</updated>
+    <content type="html">&lt;p&gt;Only updated, never published.&lt;/p&gt;</content>
+  </entry>
+</feed>

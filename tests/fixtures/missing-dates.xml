@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Timeless</title>
+    <link>https://timeless.example.com</link>
+    <description>Items without dates</description>
+    <item>
+      <title>No Date Here</title>
+      <link>https://timeless.example.com/a</link>
+      <guid>https://timeless.example.com/a</guid>
+      <description>When was this published? Nobody knows.</description>
+    </item>
+    <item>
+      <title>Garbage Date</title>
+      <link>https://timeless.example.com/b</link>
+      <guid>https://timeless.example.com/b</guid>
+      <pubDate>not a real date at all</pubDate>
+      <description>The date field is nonsense.</description>
+    </item>
+  </channel>
+</rss>

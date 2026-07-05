@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>My subscriptions</title>
+  </head>
+  <body>
+    <outline text="Technology" title="Technology">
+      <outline text="Hacker News" title="Hacker News" type="rss"
+               xmlUrl="https://hnrss.org/frontpage" htmlUrl="https://news.ycombinator.com"/>
+      <outline text="Lobsters" title="Lobsters" type="rss"
+               xmlUrl="https://lobste.rs/rss" htmlUrl="https://lobste.rs"/>
+      <outline text="Nested" title="Nested">
+        <outline text="xkcd" title="xkcd" type="rss"
+                 xmlUrl="https://xkcd.com/rss.xml" htmlUrl="https://xkcd.com"/>
+      </outline>
+    </outline>
+    <outline text="Reading" title="Reading">
+      <outline text="The Marginalian" title="The Marginalian" type="rss"
+               xmlUrl="https://www.themarginalian.org/feed/" htmlUrl="https://www.themarginalian.org"/>
+      <!-- Duplicate of the same feed, differently cased/trailing slash -->
+      <outline text="Marginalian dup" title="Marginalian dup" type="rss"
+               xmlUrl="https://www.themarginalian.org/feed/"/>
+    </outline>
+    <outline text="A folder with no feeds" title="A folder with no feeds"/>
+  </body>
+</opml>
