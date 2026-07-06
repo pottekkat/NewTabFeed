@@ -9,7 +9,7 @@ export default tseslint.config(
   {
     ignores: [
       '.wxt/**',
-      '.output/**',
+      'dist/**',
       'node_modules/**',
       'coverage/**',
       'playwright-report/**',

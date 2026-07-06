@@ -4,6 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  // Build into a conventional, visible `dist/` (WXT defaults to hidden
+  // `.output/`). Per-target builds land in `dist/chrome-mv3`; `wxt zip`
+  // writes the package to `dist/`.
+  outDir: 'dist',
   // Auto-imports are disabled deliberately: we use explicit imports from
   // '#imports' everywhere. It keeps the lint/typecheck story simple and makes
   // every dependency visible at the top of each file.

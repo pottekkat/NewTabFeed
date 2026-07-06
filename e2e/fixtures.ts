@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { startFixtureServer, type FixtureServer } from './server';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const extensionPath = resolve(here, '../.output/chrome-mv3');
+const extensionPath = resolve(here, '../dist/chrome-mv3');
 
 // Chrome/Edge removed the extension-loading flags, so e2e depends on
 // Playwright's bundled Chromium (`channel: 'chromium'`) plus a persistent

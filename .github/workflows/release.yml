@@ -58,7 +58,7 @@ jobs:
 
       - name: Locate package
         id: pkg
-        run: echo "zip=$(ls .output/*.zip | head -n1)" >> "$GITHUB_OUTPUT"
+        run: echo "zip=$(ls dist/*.zip | head -n1)" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

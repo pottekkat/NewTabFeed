@@ -57,7 +57,7 @@ export default defineConfig({
           exclude: [
             'e2e/**',
             'node_modules/**',
-            '.output/**',
+            'dist/**',
             '.wxt/**',
             '**/*.browser.test.{ts,tsx}',
           ],
@@ -89,7 +89,7 @@ export default defineConfig({
         test: {
           name: 'browser',
           include: ['**/*.browser.test.{ts,tsx}'],
-          exclude: ['node_modules/**', '.output/**', '.wxt/**'],
+          exclude: ['node_modules/**', 'dist/**', '.wxt/**'],
           browser: {
             enabled: true,
             provider: playwright(),

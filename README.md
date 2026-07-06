@@ -31,7 +31,7 @@ Most "discovery" new tabs decide what you should read and quietly measure how yo
 
 1. `pnpm install && pnpm build`
 2. Open `chrome://extensions` and enable **Developer mode**.
-3. **Load unpacked** → select `.output/chrome-mv3`.
+3. **Load unpacked** → select `dist/chrome-mv3`.
 4. Open a new tab to start onboarding.
 
 ## Screenshots
@@ -49,7 +49,7 @@ Requires [pnpm](https://pnpm.io) and Node 22+.
 | Command                | What it does                                                                   |
 | ---------------------- | ------------------------------------------------------------------------------ |
 | `pnpm dev`             | Run WXT with hot reload (Chrome)                                               |
-| `pnpm build`           | Production build → `.output/chrome-mv3`                                        |
+| `pnpm build`           | Production build → `dist/chrome-mv3`                                           |
 | `pnpm zip`             | Package a distributable zip                                                    |
 | `pnpm icons`           | Regenerate PNG icons from `assets/icon.svg`                                    |
 | `pnpm test`            | Unit tests (Vitest, node project)                                              |
