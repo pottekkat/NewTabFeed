@@ -157,4 +157,41 @@ describe('resolveAndCacheIcon', () => {
       }),
     ).resolves.toBeUndefined();
   });
+
+  it('returns undefined once the total budget elapses on slow sources', async () => {
+    vi.useFakeTimers();
+    try {
+      // Every source hangs until its request signal aborts (per-request timeout
+      // or the shared total budget). With fake timers this never resolves on its
+      // own, so if resolution completes it can only be because the budget bounded
+      // it — proving a slow host can't run past the ~6s cap into the SW limit.
+      fetchMock.mockImplementation(
+        (_url: string, init?: { signal?: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            const signal = init?.signal;
+            const abort = () =>
+              reject(
+                Object.assign(new Error('aborted'), { name: 'AbortError' }),
+              );
+            if (signal?.aborted) {
+              abort();
+              return;
+            }
+            signal?.addEventListener('abort', abort, { once: true });
+          }),
+      );
+
+      const promise = resolveAndCacheIcon({
+        siteUrl: 'https://slow.example.com',
+        feedIconUrl: 'https://slow.example.com/icon.png',
+      });
+
+      // Advance past the 6s total budget; the budget's abort must unwind every
+      // pending/queued fetch and resolve to undefined.
+      await vi.advanceTimersByTimeAsync(6_000);
+      await expect(promise).resolves.toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -10,15 +10,30 @@
 // MV3 hazards handled here:
 // - NO DOM APIs in the worker: icon `<link>`s are extracted from the homepage
 //   HTML with a regex over the `<head>`, never a DOMParser.
-// - A response that takes >30s kills the worker, so every fetch has an 8s
-//   AbortController timeout.
-// - Icon resolution is strictly BEST-EFFORT: any failure returns undefined and
-//   never throws out of subscribe/refresh. Everything is wrapped in try/catch.
+// - A response that takes >30s kills the worker. Beyond the per-request timeout,
+//   the WHOLE resolution shares a single 6s budget (homepage + every icon
+//   candidate + favicon.ico combined). A feed refresh does up to a 20s feed
+//   fetch and THEN this, so bounding favicon work at 6s keeps the worst case at
+//   ~26s — safely under the 30s worker limit. When the budget elapses, all
+//   in-flight and subsequent favicon fetches abort and resolution returns
+//   undefined.
+// - Icon resolution is strictly BEST-EFFORT: any failure (including budget
+//   exhaustion) returns undefined and never throws out of subscribe/refresh.
+//   Everything is wrapped in try/catch.
 
 import { originOf, resolveUrl } from '@/lib/url';
 
-/** Per-request timeout. Favicon work must never approach the 30s worker limit. */
-const ICON_FETCH_TIMEOUT_MS = 8_000;
+/**
+ * Total wall-clock budget for one `resolveAndCacheIcon` call, across every fetch
+ * it makes. This — not the per-request timeout — is what keeps a refresh within
+ * the 30s worker limit (feed fetch ≤20s + favicon ≤6s ≈ 26s).
+ */
+const ICON_TOTAL_BUDGET_MS = 6_000;
+/**
+ * Per-request timeout, kept under the total budget so one slow host can't
+ * consume it all — two quick failures still fit inside the budget.
+ */
+const ICON_FETCH_TIMEOUT_MS = 5_000;
 /** Skip icons larger than this to keep IndexedDB small (~150 KB). */
 const MAX_ICON_BYTES = 150 * 1024;
 /** Only the first slice of the homepage is scanned for `<link>`s (head lives up top). */
@@ -52,19 +67,28 @@ const EXT_MIME: Record<string, string> = {
  *   3. `${origin}/favicon.ico` — the conventional fallback.
  *
  * Best-effort: never throws. A network/permission/parse failure just falls
- * through to the next source (or returns undefined).
+ * through to the next source (or returns undefined). The whole call shares a
+ * single {@link ICON_TOTAL_BUDGET_MS} deadline; once it elapses every fetch
+ * aborts and the function returns undefined.
  */
 export async function resolveAndCacheIcon(opts: {
   siteUrl?: string;
   feedIconUrl?: string;
 }): Promise<string | undefined> {
   const { siteUrl, feedIconUrl } = opts;
+  // One shared deadline for the entire resolution. Its signal is threaded into
+  // every fetch, so budget exhaustion aborts in-flight and subsequent requests.
+  const budget = new AbortController();
+  const deadline = setTimeout(() => budget.abort(), ICON_TOTAL_BUDGET_MS);
+  const signal = budget.signal;
   try {
     // 1. The feed's own declared icon. If it yields bytes we stop here and
     //    never touch the homepage (cheapest, most authoritative source).
     if (feedIconUrl) {
       const resolved = resolveUrl(feedIconUrl, siteUrl);
-      const data = resolved ? await fetchIconBytes(resolved) : undefined;
+      const data = resolved
+        ? await fetchIconBytes(resolved, signal)
+        : undefined;
       if (data) {
         return data;
       }
@@ -72,9 +96,11 @@ export async function resolveAndCacheIcon(opts: {
 
     // 2. Icon links declared in the homepage <head>.
     if (siteUrl) {
-      for (const href of await findHtmlIcons(siteUrl)) {
+      for (const href of await findHtmlIcons(siteUrl, signal)) {
         const resolved = resolveUrl(href, siteUrl);
-        const data = resolved ? await fetchIconBytes(resolved) : undefined;
+        const data = resolved
+          ? await fetchIconBytes(resolved, signal)
+          : undefined;
         if (data) {
           return data;
         }
@@ -84,13 +110,16 @@ export async function resolveAndCacheIcon(opts: {
     // 3. The conventional /favicon.ico at the site origin.
     const origin = originOf(siteUrl);
     if (origin) {
-      const data = await fetchIconBytes(`${origin}/favicon.ico`);
+      const data = await fetchIconBytes(`${origin}/favicon.ico`, signal);
       if (data) {
         return data;
       }
     }
   } catch {
-    // Best-effort: swallow anything unexpected and leave the icon unset.
+    // Best-effort: swallow anything unexpected (including budget aborts) and
+    // leave the icon unset.
+  } finally {
+    clearTimeout(deadline);
   }
   return undefined;
 }
@@ -100,9 +129,12 @@ export async function resolveAndCacheIcon(opts: {
  * `data:<mime>;base64,<bytes>` string. Returns undefined on any failure or if
  * the response isn't a valid, reasonably-sized image.
  */
-async function fetchIconBytes(url: string): Promise<string | undefined> {
+async function fetchIconBytes(
+  url: string,
+  signal: AbortSignal,
+): Promise<string | undefined> {
   try {
-    const response = await fetchWithTimeout(url);
+    const response = await fetchWithTimeout(url, signal);
     if (!response.ok) {
       return undefined;
     }
@@ -132,9 +164,12 @@ async function fetchIconBytes(url: string): Promise<string | undefined> {
  * Fetch the homepage HTML and extract icon `<link>` hrefs from its `<head>`,
  * ordered by preference (apple-touch-icon first). Returns [] on any failure.
  */
-async function findHtmlIcons(siteUrl: string): Promise<string[]> {
+async function findHtmlIcons(
+  siteUrl: string,
+  signal: AbortSignal,
+): Promise<string[]> {
   try {
-    const response = await fetchWithTimeout(siteUrl);
+    const response = await fetchWithTimeout(siteUrl, signal);
     if (!response.ok) {
       return [];
     }
@@ -187,10 +222,24 @@ function getAttr(tag: string, name: string): string | undefined {
   return m[2] ?? m[3] ?? m[4];
 }
 
-/** Fetch with an AbortController timeout; credentials omitted (public assets). */
-async function fetchWithTimeout(url: string): Promise<Response> {
+/**
+ * Fetch with a per-request AbortController timeout, composed with the shared
+ * total-budget `signal` so whichever fires first aborts the request. Credentials
+ * omitted (public assets).
+ */
+async function fetchWithTimeout(
+  url: string,
+  signal: AbortSignal,
+): Promise<Response> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ICON_FETCH_TIMEOUT_MS);
+  // If the overall budget is already spent, don't even start the request.
+  if (signal.aborted) {
+    controller.abort();
+  }
+  // Abort this request when the shared budget elapses.
+  const onBudgetAbort = () => controller.abort();
+  signal.addEventListener('abort', onBudgetAbort, { once: true });
   try {
     return await fetch(url, {
       signal: controller.signal,
@@ -200,6 +249,7 @@ async function fetchWithTimeout(url: string): Promise<Response> {
     });
   } finally {
     clearTimeout(timeout);
+    signal.removeEventListener('abort', onBudgetAbort);
   }
 }
 

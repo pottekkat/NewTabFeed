@@ -1,5 +1,5 @@
 import { AlertTriangle, Check, ChevronDown } from 'lucide-react';
-import type { Feed } from '@/lib/types';
+import { isPersistentError, type Feed } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Favicon } from './Favicon';
 import { MenuItem, Popover } from './Popover';
@@ -74,7 +74,7 @@ export function FeedFilter({
               >
                 <Favicon siteUrl={feed.siteUrl} fallback={label(feed)} />
                 <span className="flex-1 truncate">{label(feed)}</span>
-                {feed.error && (
+                {feed.error && isPersistentError(feed) && (
                   <span
                     title={feed.error.message}
                     aria-label={`Feed error: ${feed.error.message}`}

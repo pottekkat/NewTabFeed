@@ -9,7 +9,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import type { Feed } from '@/lib/types';
+import { isPersistentError, type Feed } from '@/lib/types';
 import type { ImportOpmlResult } from '@/lib/opml';
 import { getFeed, upsertFeed } from '@/lib/db';
 import { requestHostAccess } from '@/lib/permissions';
@@ -292,7 +292,7 @@ function FeedRow({ feed, unread, onChanged }: FeedRowProps) {
           </button>
         )}
         <div className="text-muted-foreground truncate text-xs">{feed.url}</div>
-        {feed.error && (
+        {feed.error && isPersistentError(feed) && (
           <div className="mt-0.5 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-500">
             <AlertTriangle className="size-3 shrink-0" />
             <span className="truncate">
