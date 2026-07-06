@@ -59,6 +59,17 @@ describe('firstContentImage', () => {
     expect(firstContentImage(html)).toBe('https://cdn.example.com/hero.jpg');
   });
 
+  it('reads src when it follows other attributes (alt before src)', () => {
+    // Real-world Atom content shape: alt (with entity-encoded quotes) first,
+    // src last, self-closing. getAttr locates src regardless of position.
+    const html =
+      '<img alt="A map of the world, it looks very &quot;good&quot;" ' +
+      'src="https://static.example.net/world-map-ascii.png" />';
+    expect(firstContentImage(html)).toBe(
+      'https://static.example.net/world-map-ascii.png',
+    );
+  });
+
   it('returns undefined when there is no img', () => {
     expect(
       firstContentImage('<p>Just <em>text</em> here.</p>'),

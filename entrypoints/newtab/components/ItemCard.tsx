@@ -20,9 +20,11 @@ interface ItemCardProps {
 }
 
 /**
- * A stable per-source key for the placeholder gradient — the article's
- * hostname, so all items from one source share a color. Falls back to the feed
- * id (or title) when the URL can't be parsed.
+ * A stable key the placeholder gradient's hue derives from — the linked
+ * article's hostname. Same host always yields the same color: a direct blog's
+ * posts share one tint, while an aggregator's cards (whose links point at many
+ * outside domains) get pleasant per-domain variety. Falls back to the feed id
+ * (or title) when the URL can't be parsed.
  */
 function coverSeed(item: FeedItem): string {
   try {
