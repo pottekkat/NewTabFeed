@@ -42,4 +42,26 @@ describe('excerpt', () => {
     expect(out).not.toContain('<');
     expect(out).not.toContain('>');
   });
+
+  it('suppresses a link-only body (Lobsters "Comments")', () => {
+    expect(
+      excerpt('<p><a href="https://lobste.rs/s/abc">Comments</a></p>'),
+    ).toBe('');
+    expect(excerpt('<a href="https://x/y">Comments</a>')).toBe('');
+  });
+
+  it('suppresses aggregator metadata (hnrss Article/Comments URL block)', () => {
+    const hn =
+      '<p>Article URL: <a href="https://sneakerweb.org/">https://sneakerweb.org/</a></p>' +
+      '<p>Comments URL: <a href="https://news.ycombinator.com/item?id=48799781">https://news.ycombinator.com/item?id=48799781</a></p>' +
+      '<p>Points: 40</p><p># Comments: 10</p>';
+    expect(excerpt(hn)).toBe('');
+  });
+
+  it('keeps real prose that merely ends in a link', () => {
+    const out = excerpt(
+      '<p>A genuine summary of the article. <a href="https://x/y">Read more</a></p>',
+    );
+    expect(out).toBe('A genuine summary of the article. Read more');
+  });
 });
