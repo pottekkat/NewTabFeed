@@ -9,6 +9,7 @@ import { canonicalizeUrl, resolveUrl } from '@/lib/url';
 import { itemId } from '@/lib/hash';
 import { parseFeed } from '@/lib/feeds/parse';
 import { fetchFeed, FeedFetchError } from '@/lib/feeds/fetch';
+import { resolveAndCacheIcon } from '@/lib/feeds/favicon';
 import { NoHostPermissionError } from '@/lib/permissions';
 import {
   deleteFeed,
@@ -102,11 +103,18 @@ export async function subscribe(rawUrl: string): Promise<SubscribeResult> {
 
   const parsed = parseFeedOrThrow(url, result.body);
   const now = Date.now();
+  const siteUrl = resolveUrl(parsed.feed.siteUrl, url);
+  // Fetch + cache the favicon bytes as a local data URL. Best-effort: the helper
+  // never throws, so a favicon failure can never fail the subscription.
+  const iconUrl = await resolveAndCacheIcon({
+    siteUrl,
+    feedIconUrl: parsed.feed.iconUrl,
+  });
   const feed: Feed = {
     id: url,
     url,
-    siteUrl: resolveUrl(parsed.feed.siteUrl, url),
-    iconUrl: resolveUrl(parsed.feed.iconUrl, url),
+    siteUrl,
+    iconUrl,
     title: parsed.feed.title?.trim() || hostnameOf(url),
     description: parsed.feed.description,
     addedAt: now,
@@ -192,12 +200,23 @@ export async function refreshFeed(
   const addedItems = await upsertItems(items);
   await pruneFeed(feed.id);
 
+  const siteUrl = resolveUrl(parsed.feed.siteUrl, feed.url) ?? feed.siteUrl;
+  // Cache favicon bytes locally. Only (re)resolve when we don't already hold a
+  // cached data URL — this avoids refetching every refresh while migrating
+  // feeds whose iconUrl is still empty or a remote URL to local bytes.
+  const iconUrl = feed.iconUrl?.startsWith('data:')
+    ? feed.iconUrl
+    : ((await resolveAndCacheIcon({
+        siteUrl,
+        feedIconUrl: parsed.feed.iconUrl,
+      })) ?? feed.iconUrl);
+
   await upsertFeed({
     ...feed,
     // Respect a user's custom title; otherwise track the feed's own title.
     title: parsed.feed.title?.trim() || feed.title,
-    siteUrl: resolveUrl(parsed.feed.siteUrl, feed.url) ?? feed.siteUrl,
-    iconUrl: resolveUrl(parsed.feed.iconUrl, feed.url) ?? feed.iconUrl,
+    siteUrl,
+    iconUrl,
     description: parsed.feed.description ?? feed.description,
     lastFetchedAt: now,
     lastPublishedAt: maxDefined(

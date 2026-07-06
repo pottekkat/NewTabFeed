@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { AlertCircle, Check, Loader2, Plus, X } from 'lucide-react';
 import { STARTER_FEEDS } from '@/lib/starter-feeds';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Favicon } from './Favicon';
@@ -105,10 +106,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
     <main className="bg-background text-foreground min-h-screen">
       <div className="mx-auto flex max-w-xl flex-col items-center px-6 py-16 sm:py-24">
         <div className="mb-1 flex items-center gap-2">
-          <span
-            className="size-2.5 rounded-full bg-orange-500"
-            aria-hidden="true"
-          />
+          <Logo size={28} className="rounded-[6px]" />
           <h1 className="text-2xl font-semibold tracking-tight">NewTabFeed</h1>
         </div>
         <p className="text-muted-foreground text-lg">

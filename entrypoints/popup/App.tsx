@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
-import {
-  Check,
-  ExternalLink,
-  Loader2,
-  Radar,
-  Rss,
-  ShieldCheck,
-} from 'lucide-react';
+import { Check, ExternalLink, Loader2, Radar, ShieldCheck } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { hasHostAccess, requestHostAccess } from '@/lib/permissions';
 import { listFeeds } from '@/lib/db';
@@ -113,7 +107,7 @@ export default function App() {
   return (
     <div className="bg-background text-foreground flex w-[360px] flex-col">
       <header className="flex items-center gap-2 border-b px-4 py-3">
-        <Rss className="text-primary size-4" />
+        <Logo size={18} />
         <h1 className="text-sm font-semibold">NewTabFeed</h1>
       </header>
 

@@ -15,6 +15,17 @@ import {
 } from '@/lib/feeds';
 import { NoHostPermissionError } from '@/lib/permissions';
 
+// Favicon caching does real network work in the worker; stub it here so
+// subscribe/refresh tests stay deterministic and offline. It returns a cached
+// `data:` URL whenever the feed declared an icon, mirroring the real helper's
+// "feed icon first" behavior. favicon.test.ts covers the real implementation.
+vi.mock('@/lib/feeds/favicon', () => ({
+  resolveAndCacheIcon: vi.fn(
+    async ({ feedIconUrl }: { siteUrl?: string; feedIconUrl?: string }) =>
+      feedIconUrl ? 'data:image/png;base64,AAAA' : undefined,
+  ),
+}));
+
 // Host access is granted by default; individual tests flip `hasAccess`.
 const hasAccess = vi.fn<() => Promise<boolean>>();
 vi.mock('@/lib/permissions', async (importOriginal) => {
@@ -127,14 +138,13 @@ describe('subscribe', () => {
     expect(await listItems()).toHaveLength(2);
   });
 
-  it("persists the feed's declared icon as an absolute iconUrl", async () => {
+  it("caches the feed's declared icon as a local data URL", async () => {
     serve(FEED_URL, { body: fixture('rss2.xml') });
     const { feed } = await subscribe(FEED_URL);
-    // rss2.xml declares <image><url>/logo.png</url>, resolved against the site.
-    expect(feed.iconUrl).toBe('https://example.com/logo.png');
-    expect((await getFeed(FEED_URL))?.iconUrl).toBe(
-      'https://example.com/logo.png',
-    );
+    // rss2.xml declares <image><url>/logo.png</url>; the worker fetches its
+    // bytes and stores them as a data URL (stubbed helper).
+    expect(feed.iconUrl).toMatch(/^data:image\//);
+    expect((await getFeed(FEED_URL))?.iconUrl).toMatch(/^data:image\//);
   });
 
   it('stores only the newest 10 items when a feed has more', async () => {

@@ -23,7 +23,12 @@ export interface Feed {
   url: string;
   /** Canonical site/home URL, when the feed advertises one. */
   siteUrl?: string;
-  /** Absolute URL of the feed's own icon/logo, when it declares one. */
+  /**
+   * The feed's icon. Normally a locally-cached `data:` URL of the icon bytes
+   * (fetched in the service worker so rendering always works, offline
+   * included). May be a remote absolute URL for feeds not yet migrated, or
+   * unset when no icon could be resolved.
+   */
   iconUrl?: string;
   /** Title as reported by the feed. */
   title: string;

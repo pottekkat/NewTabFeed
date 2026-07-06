@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import type { Feed } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { FeedFilter } from './FeedFilter';
 import { MenuItem, Popover } from './Popover';
@@ -41,27 +42,7 @@ export function Header({
     <header className="bg-background/80 sticky top-0 z-30 border-b backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-2 px-4 sm:px-6">
         <div className="mr-1 flex items-center gap-1.5">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 128 128"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            className="rounded-[4px]"
-          >
-            <rect width="128" height="128" rx="28" fill="#F97316" />
-            <g
-              stroke="#FFFFFF"
-              strokeWidth="12"
-              strokeLinecap="round"
-              fill="none"
-            >
-              <path d="M38 62 A28 28 0 0 1 66 90" />
-              <path d="M38 40 A50 50 0 0 1 88 90" />
-            </g>
-            <circle cx="38" cy="90" r="11" fill="#18181B" />
-          </svg>
+          <Logo size={18} className="rounded-[4px]" />
           <span className="text-sm font-semibold tracking-tight">
             NewTabFeed
           </span>
