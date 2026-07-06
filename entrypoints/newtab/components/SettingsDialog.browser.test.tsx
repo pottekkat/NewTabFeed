@@ -84,10 +84,10 @@ describe('SettingsDialog', () => {
 
   it('writes the refresh interval from the select', async () => {
     const screen = await renderDialog();
-    await userEvent.selectOptions(
-      screen.getByRole('combobox'),
-      screen.getByRole('option', { name: 'Every hour' }),
-    );
+    // Radix Select is a custom listbox: open the trigger, then click the
+    // option in the portalled content (options carry role="option").
+    await userEvent.click(screen.getByRole('combobox'));
+    await userEvent.click(screen.getByRole('option', { name: 'Every hour' }));
     expect(setValues.refreshIntervalMinutes).toHaveBeenCalledWith(60);
   });
 

@@ -11,6 +11,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { settings as settingsItems } from '../lib/use-settings';
 
 interface SettingsDialogProps {
@@ -79,22 +86,23 @@ export function SettingsDialog({
         </Field>
 
         <Field label="Refresh feeds" htmlFor="refresh-interval">
-          <select
-            id="refresh-interval"
-            value={settings.refreshIntervalMinutes}
-            onChange={(e) =>
-              void settingsItems.refreshIntervalMinutes.setValue(
-                Number(e.target.value),
-              )
+          <Select
+            value={String(settings.refreshIntervalMinutes)}
+            onValueChange={(value) =>
+              void settingsItems.refreshIntervalMinutes.setValue(Number(value))
             }
-            className="border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           >
-            {REFRESH_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="refresh-interval" className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {REFRESH_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={String(opt.value)}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
 
         <div className="flex items-center justify-between gap-4">

@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import {
+  openNewTab,
   openPopup,
   tabIdForUrl,
   badgeText,
@@ -55,4 +56,25 @@ test('a plain page offers a probe that finds a well-known feed', async ({
   await expect(subscribe).toBeVisible();
   await subscribe.click();
   await expect(popup.getByText('Subscribed').first()).toBeVisible();
+});
+
+test("on NewTabFeed's own page the popup explains itself instead of offering a dead probe", async ({
+  context,
+  extensionId,
+  background,
+}) => {
+  // The reader's own new-tab page isn't a feed source — probing it is
+  // meaningless, so the popup should say so rather than show "No feed
+  // advertised" + a Check-for-RSS-feeds button that could only ever fail.
+  await openNewTab(context, extensionId);
+  const tabId = await tabIdForUrl(
+    background,
+    `chrome-extension://${extensionId}/newtab.html`,
+  );
+
+  const popup = await openPopup(context, extensionId, tabId);
+  await expect(popup.getByText(/You're on NewTabFeed/)).toBeVisible();
+  await expect(
+    popup.getByRole('button', { name: 'Check for RSS feeds' }),
+  ).toHaveCount(0);
 });

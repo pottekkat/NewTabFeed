@@ -23,12 +23,26 @@ test('theme and density changes apply and persist', async ({
   await dialog.getByRole('button', { name: 'Compact', exact: true }).click();
   await expect(grid).toHaveClass(/minmax\(220px/);
 
-  // Reopen: persisted theme wins over the (still light) OS preference, and density sticks.
+  // Refresh interval is a portalled Radix Select (not a native <select>): open it,
+  // pick a new value, and confirm the trigger reflects the choice. This exercises
+  // the portal rendering inside the dialog, which a component test can't fully vet.
+  const interval = dialog.getByRole('combobox');
+  await expect(interval).toHaveText('Every 30 minutes');
+  await interval.click();
+  await page.getByRole('option', { name: 'Every hour' }).click();
+  await expect(interval).toHaveText('Every hour');
+
+  // Reopen: persisted theme wins over the (still light) OS preference, and
+  // density + refresh interval stick.
   const reopened = await openNewTab(context, extensionId);
   await reopened.emulateMedia({ colorScheme: 'light' });
   await expect(reopened.locator('html')).toHaveClass(/dark/);
   await expect(reopened.locator('[data-slot="item-grid"]')).toHaveClass(
     /minmax\(220px/,
+  );
+  await openHeaderMenu(reopened, 'Settings');
+  await expect(reopened.getByRole('dialog').getByRole('combobox')).toHaveText(
+    'Every hour',
   );
 });
 
