@@ -27,6 +27,16 @@ export interface FixtureServer {
 const BASE_TIME = Date.UTC(2024, 0, 1, 12, 0, 0);
 
 /**
+ * A valid 1×1 PNG served at `/cover.png`. The cover-image e2e needs the card's
+ * `<img>` to actually load — a failed load trips the card's onError and falls
+ * back to the placeholder, which would defeat the "real cover" assertions.
+ */
+const COVER_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64',
+);
+
+/**
  * Build an RSS 2.0 document with `count` items (ids 0..count-1). Higher ids are
  * newer, so item `count-1` sorts to the top of the timeline. Item links point at
  * `${base}/posts/<id>` on this same origin.
@@ -74,6 +84,57 @@ function makeAtom(base: string): string {
 </feed>`;
 }
 
+/**
+ * An RSS 2.0 feed exercising the cover-image + excerpt pipeline, served at
+ * `/rich.xml`. Its four items cover each distinct outcome the newtab card can
+ * render: a real cover pulled from an inline content `<img>`, a real cover from a
+ * structured `media:thumbnail`, a generated placeholder with the body suppressed
+ * (link-only aggregator), and a generated placeholder with a visible excerpt
+ * (plain prose, no image). `pubDate`s descend so the items sort newest-first in
+ * the order listed (item 1 newest). Links point at `${base}/posts/<n>` (served
+ * as 200 HTML) so card navigation succeeds.
+ */
+export function makeRichRss(base: string): string {
+  const pub = (i: number) => new Date(BASE_TIME - i * 60_000).toUTCString();
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>E2E Rich Fixture Feed</title>
+    <link>${base}</link>
+    <description>Feed exercising cover images, placeholders, and excerpts.</description>
+    <item>
+      <title>Inline image cover</title>
+      <link>${base}/posts/1</link>
+      <guid isPermaLink="false">e2e-rich-1</guid>
+      <pubDate>${pub(1)}</pubDate>
+      <description><![CDATA[<p>This post embeds its cover inline in the body text.</p><img src="${base}/cover.png" alt="" />]]></description>
+    </item>
+    <item>
+      <title>Structured media cover</title>
+      <link>${base}/posts/2</link>
+      <guid isPermaLink="false">e2e-rich-2</guid>
+      <pubDate>${pub(2)}</pubDate>
+      <media:thumbnail url="${base}/cover.png"/>
+      <description>Structured thumbnail body, plain prose here.</description>
+    </item>
+    <item>
+      <title>Link-only aggregator</title>
+      <link>${base}/posts/3</link>
+      <guid isPermaLink="false">e2e-rich-3</guid>
+      <pubDate>${pub(3)}</pubDate>
+      <description><![CDATA[<a href="${base}/posts/3">Comments</a>]]></description>
+    </item>
+    <item>
+      <title>Plain text no image</title>
+      <link>${base}/posts/4</link>
+      <guid isPermaLink="false">e2e-rich-4</guid>
+      <pubDate>${pub(4)}</pubDate>
+      <description>Just readable prose, and no image at all in this one.</description>
+    </item>
+  </channel>
+</rss>`;
+}
+
 function pageWithFeed(base: string): string {
   return `<!doctype html>
 <html lang="en">
@@ -108,8 +169,20 @@ export async function startFixtureServer(): Promise<FixtureServer> {
       case '/rss.xml':
       case '/rss':
         return send(200, 'application/rss+xml; charset=utf-8', rssBody);
+      case '/rich.xml':
+        return send(
+          200,
+          'application/rss+xml; charset=utf-8',
+          makeRichRss(base),
+        );
       case '/atom.xml':
         return send(200, 'application/atom+xml; charset=utf-8', atomBody);
+      case '/cover.png':
+        // A real binary image so the card's cover <img> actually loads (the
+        // string-only `send` helper can't carry a Buffer body).
+        res.writeHead(200, { 'content-type': 'image/png' });
+        res.end(COVER_PNG);
+        return;
       case '/page-with-feed.html':
         return send(200, 'text/html; charset=utf-8', pageWithFeed(base));
       case '/page-plain.html':
