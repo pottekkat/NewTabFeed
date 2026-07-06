@@ -20,9 +20,27 @@ function canonicalKey(url: string): string {
 
 type Phase = 'loading' | 'no-access' | 'ready';
 
+/**
+ * What kind of page the active tab is:
+ * - `web`   — a regular http(s) site we can look for feeds on.
+ * - `own`   — NewTabFeed's own page (the new tab / reader). Probing it is
+ *   meaningless — it's the reader, not a source — so we say so instead.
+ * - `other` — a browser-internal page (chrome://, about:, other extensions,
+ *   the web store…) where feed detection can't run.
+ */
+type PageKind = 'web' | 'own' | 'other';
+
 interface TabInfo {
   id?: number;
   origin?: string;
+  kind?: PageKind;
+}
+
+/** Classify a tab URL. Our own pages are matched by the extension origin. */
+function pageKindOf(url: string | undefined): PageKind {
+  if (!url) return 'other';
+  if (url.startsWith(browser.runtime.getURL('/'))) return 'own';
+  return /^https?:\/\//i.test(url) ? 'web' : 'other';
 }
 
 export default function App() {
@@ -56,12 +74,15 @@ export default function App() {
       overrideTabId !== null
         ? await browser.tabs.get(Number(overrideTabId))
         : (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+    const kind = pageKindOf(active?.url);
     const origin = originOf(active?.url);
-    setTab({ id: active?.id, origin });
+    setTab({ id: active?.id, origin, kind });
 
     await loadSubscribed();
 
-    if (active?.id !== undefined) {
+    // Feed detection only means anything on a real web page — not the reader's
+    // own page or a browser-internal one.
+    if (kind === 'web' && active?.id !== undefined) {
       const res = await sendRequest({
         type: 'get-discovered',
         tabId: active.id,
@@ -121,7 +142,8 @@ export default function App() {
             probed={probed}
             probing={probing}
             probeError={probeError}
-            canProbe={Boolean(tab.origin)}
+            kind={tab.kind ?? 'other'}
+            canProbe={tab.kind === 'web' && Boolean(tab.origin)}
             onProbe={probe}
             onSubscribed={onSubscribed}
           />
@@ -171,6 +193,7 @@ function ReadyView({
   probed,
   probing,
   probeError,
+  kind,
   canProbe,
   onProbe,
   onSubscribed,
@@ -180,6 +203,7 @@ function ReadyView({
   probed: boolean;
   probing: boolean;
   probeError: string | null;
+  kind: PageKind;
   canProbe: boolean;
   onProbe: () => void;
   onSubscribed: (url: string) => void;
@@ -196,6 +220,18 @@ function ReadyView({
           />
         ))}
       </ul>
+    );
+  }
+
+  // Not a web page (the reader's own tab, or a browser-internal page): feed
+  // detection can't run here, so explain rather than offer a dead probe button.
+  if (kind !== 'web') {
+    return (
+      <p className="text-muted-foreground py-1 text-sm">
+        {kind === 'own'
+          ? "You're on NewTabFeed. Open a website, then click the NewTabFeed icon to add its feed."
+          : 'NewTabFeed can only find feeds on regular web pages.'}
+      </p>
     );
   }
 
