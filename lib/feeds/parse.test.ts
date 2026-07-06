@@ -167,6 +167,70 @@ describe('parseFeed — identity and edge cases', () => {
   });
 });
 
+describe('parseFeed — inline content-image fallback', () => {
+  it('RSS: uses the first content <img> when no structured thumbnail exists', () => {
+    const xml = `<?xml version="1.0"?>
+      <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+        <channel>
+          <title>Inline Images</title>
+          <link>https://blog.test</link>
+          <item>
+            <title>Post</title>
+            <link>https://blog.test/posts/one</link>
+            <guid>https://blog.test/posts/one</guid>
+            <content:encoded><![CDATA[<p>Hi</p><img src="/img/cover.jpg">]]></content:encoded>
+          </item>
+        </channel>
+      </rss>`;
+    const parsed = parseFeed(xml);
+    // Relative content-img src resolves to an absolute URL on the item's origin.
+    expect(parsed.items[0].thumbnailUrl).toBe(
+      'https://blog.test/img/cover.jpg',
+    );
+  });
+
+  it('RSS: a structured media:thumbnail wins over a content <img>', () => {
+    const xml = `<?xml version="1.0"?>
+      <rss version="2.0"
+           xmlns:content="http://purl.org/rss/1.0/modules/content/"
+           xmlns:media="http://search.yahoo.com/mrss/">
+        <channel>
+          <title>Precedence</title>
+          <link>https://blog.test</link>
+          <item>
+            <title>Post</title>
+            <link>https://blog.test/posts/one</link>
+            <guid>https://blog.test/posts/one</guid>
+            <media:thumbnail url="https://cdn.test/structured.jpg"/>
+            <content:encoded><![CDATA[<img src="https://cdn.test/inline.jpg">]]></content:encoded>
+          </item>
+        </channel>
+      </rss>`;
+    const parsed = parseFeed(xml);
+    expect(parsed.items[0].thumbnailUrl).toBe(
+      'https://cdn.test/structured.jpg',
+    );
+  });
+
+  it('Atom: uses the first content <img> when no structured thumbnail exists', () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Inline Atom</title>
+        <link href="https://notes.test/"/>
+        <entry>
+          <title>Entry</title>
+          <id>urn:uuid:inline-1</id>
+          <link href="https://notes.test/entry/1"/>
+          <content type="html">&lt;p&gt;Body&lt;/p&gt;&lt;img src="/media/pic.png"&gt;</content>
+        </entry>
+      </feed>`;
+    const parsed = parseFeed(xml);
+    expect(parsed.items[0].thumbnailUrl).toBe(
+      'https://notes.test/media/pic.png',
+    );
+  });
+});
+
 describe('parseDate', () => {
   it('parses RFC-822 dates', () => {
     expect(parseDate('Wed, 02 Oct 2024 13:00:00 GMT')).toBe(

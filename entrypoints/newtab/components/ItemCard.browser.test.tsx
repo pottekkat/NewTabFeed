@@ -113,7 +113,7 @@ describe('ItemCard', () => {
     expect(read.container.querySelector('[data-read="true"]')).not.toBeNull();
   });
 
-  it('renders a cover image when the item has a thumbnail', async () => {
+  it('renders a real cover image (and no placeholder) when the item has a thumbnail', async () => {
     const screen = await render(
       <ItemCard
         item={makeItem({ thumbnailUrl: 'https://example.com/cover.jpg' })}
@@ -128,9 +128,13 @@ describe('ItemCard', () => {
       'img[src="https://example.com/cover.jpg"]',
     );
     expect(cover).not.toBeNull();
+    // A usable real image must win — the placeholder must not also render.
+    expect(
+      screen.container.querySelector('[data-slot="cover-placeholder"]'),
+    ).toBeNull();
   });
 
-  it('renders no cover image when the item has no thumbnail', async () => {
+  it('renders a generated placeholder when the item has no thumbnail', async () => {
     const screen = await render(
       <ItemCard
         item={makeItem()}
@@ -141,9 +145,28 @@ describe('ItemCard', () => {
       />,
     );
 
-    // The only images the card can show are the cover and the favicon; the
-    // favicon mock yields no URL, so there should be no <img> at all.
+    // No real cover image (the favicon mock yields no URL either)...
     expect(screen.container.querySelector('img')).toBeNull();
+    // ...but the generated placeholder fills the slot instead.
+    expect(
+      screen.container.querySelector('[data-slot="cover-placeholder"]'),
+    ).not.toBeNull();
+  });
+
+  it('omits the placeholder in compact density', async () => {
+    const screen = await render(
+      <ItemCard
+        item={makeItem()}
+        sourceName="Example News"
+        siteUrl="https://example.com"
+        density="compact"
+        onOpen={() => {}}
+      />,
+    );
+
+    expect(
+      screen.container.querySelector('[data-slot="cover-placeholder"]'),
+    ).toBeNull();
   });
 
   it('omits the cover image in compact density', async () => {

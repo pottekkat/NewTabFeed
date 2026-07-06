@@ -10,6 +10,7 @@ import { parseFeed as parseFeedDocument } from 'feedsmith';
 import type { Atom, DeepPartial, Json, Rdf, Rss } from 'feedsmith/types';
 import type { Feed, NormalizedItem, ParsedFeed } from '@/lib/types';
 import { resolveUrl } from '@/lib/url';
+import { firstContentImage } from '@/lib/feeds/content-image';
 
 /** Newest N items to keep per parse. Feeds can be huge; the reader doesn't need history. */
 const MAX_ITEMS_PER_PARSE = 100;
@@ -124,16 +125,23 @@ function normalizeRss(feed: RssFeed): ParsedFeed {
     const enclosureThumb = raw.enclosures?.find((e) =>
       isImageEnclosure(e?.type, e?.url),
     )?.url;
+    const summaryHtml = raw.content?.encoded ?? raw.description;
     items.push({
       guid,
       title: raw.title ?? '(untitled)',
       url: link ?? siteUrl ?? '',
       publishedAt: parseDate(raw.pubDate ?? raw.dc?.dates?.[0] ?? raw.dc?.date),
       author: raw.authors?.[0] ?? raw.dc?.creators?.[0],
-      summaryHtml: raw.content?.encoded ?? raw.description,
+      summaryHtml,
+      // Structured thumbnails win; fall back to the first inline content <img>.
+      // Resolve against the item's own page first so relative srcs land on the
+      // right origin, then the site URL.
       thumbnailUrl: resolveUrl(
-        mediaThumbnail(raw.media) ?? enclosureThumb ?? raw.itunes?.image,
-        siteUrl,
+        mediaThumbnail(raw.media) ??
+          enclosureThumb ??
+          raw.itunes?.image ??
+          firstContentImage(summaryHtml),
+        link ?? siteUrl,
       ),
     });
   }
@@ -171,16 +179,21 @@ function normalizeAtom(feed: AtomFeed): ParsedFeed {
     const enclosure = entry.links?.find(
       (l) => l?.rel === 'enclosure' && isImageEnclosure(l?.type, l?.href),
     )?.href;
+    const summaryHtml = entry.content ?? entry.summary;
     items.push({
       guid,
       title: entry.title ?? '(untitled)',
       url: link ?? siteUrl ?? '',
       publishedAt: parseDate(entry.published ?? entry.updated),
       author: entry.authors?.[0]?.name,
-      summaryHtml: entry.content ?? entry.summary,
+      summaryHtml,
+      // Structured thumbnails win; fall back to the first inline content <img>,
+      // resolved against the entry's own page first, then the site URL.
       thumbnailUrl: resolveUrl(
-        mediaThumbnail(entry.media) ?? enclosure,
-        siteUrl,
+        mediaThumbnail(entry.media) ??
+          enclosure ??
+          firstContentImage(summaryHtml),
+        link ?? siteUrl,
       ),
     });
   }
@@ -205,14 +218,20 @@ function normalizeRdf(feed: RdfFeed): ParsedFeed {
     if (!guid) {
       continue;
     }
+    const summaryHtml = raw.content?.encoded ?? raw.description;
     items.push({
       guid,
       title: raw.title ?? '(untitled)',
       url: link ?? siteUrl ?? '',
       publishedAt: parseDate(raw.dc?.dates?.[0] ?? raw.dc?.date),
       author: raw.dc?.creators?.[0],
-      summaryHtml: raw.content?.encoded ?? raw.description,
-      thumbnailUrl: resolveUrl(mediaThumbnail(raw.media), siteUrl),
+      summaryHtml,
+      // Structured thumbnail wins; fall back to the first inline content <img>,
+      // resolved against the item's own page first, then the site URL.
+      thumbnailUrl: resolveUrl(
+        mediaThumbnail(raw.media) ?? firstContentImage(summaryHtml),
+        link ?? siteUrl,
+      ),
     });
   }
   return withLatest(
@@ -238,16 +257,23 @@ function normalizeJson(feed: JsonFeed): ParsedFeed {
     const attachmentThumb = raw.attachments?.find((a) =>
       isImageEnclosure(a?.mime_type, a?.url),
     )?.url;
+    const summaryHtml = raw.content_html ?? raw.summary ?? raw.content_text;
     items.push({
       guid,
       title: raw.title ?? '(untitled)',
       url: url ?? siteUrl ?? '',
       publishedAt: parseDate(raw.date_published ?? raw.date_modified),
       author: raw.authors?.[0]?.name,
-      summaryHtml: raw.content_html ?? raw.summary ?? raw.content_text,
+      summaryHtml,
+      // Structured images win; fall back to the first inline content <img>. Only
+      // content_html carries markup — content_text won't, but firstContentImage
+      // safely returns undefined for it. Resolve against the item's page first.
       thumbnailUrl: resolveUrl(
-        raw.image ?? raw.banner_image ?? attachmentThumb,
-        siteUrl,
+        raw.image ??
+          raw.banner_image ??
+          attachmentThumb ??
+          firstContentImage(summaryHtml),
+        url ?? siteUrl,
       ),
     });
   }

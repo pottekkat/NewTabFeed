@@ -2,6 +2,7 @@ import { memo, useMemo, useState } from 'react';
 import type { FeedItem } from '@/lib/types';
 import type { LayoutDensity } from '@/lib/settings';
 import { cn } from '@/lib/utils';
+import { CoverPlaceholder } from './CoverPlaceholder';
 import { Favicon } from './Favicon';
 import { excerpt } from '../lib/excerpt';
 import { absoluteTime, relativeTime } from '../lib/relative-time';
@@ -16,6 +17,19 @@ interface ItemCardProps {
   density: LayoutDensity;
   /** Called when the card is opened (plain, middle, or modified click). */
   onOpen: (item: FeedItem) => void;
+}
+
+/**
+ * A stable per-source key for the placeholder gradient — the article's
+ * hostname, so all items from one source share a color. Falls back to the feed
+ * id (or title) when the URL can't be parsed.
+ */
+function coverSeed(item: FeedItem): string {
+  try {
+    return new URL(item.url).hostname;
+  } catch {
+    return item.feedId || item.title;
+  }
 }
 
 function ItemCardImpl({
@@ -33,9 +47,13 @@ function ItemCardImpl({
     [compact, item.summaryHtml],
   );
 
-  // Cover image: comfortable density only, hidden if it fails to load.
+  // Cover image: comfortable density only, hidden if it fails to load. When no
+  // usable image exists (aggregators ship none, or the real one errored), a
+  // generated placeholder fills the same slot so the grid never looks unfinished.
   const [coverErrored, setCoverErrored] = useState(false);
-  const showCover = !compact && Boolean(item.thumbnailUrl) && !coverErrored;
+  const hasCover = Boolean(item.thumbnailUrl) && !coverErrored;
+  const showCover = !compact && hasCover;
+  const showPlaceholder = !compact && !hasCover;
 
   return (
     <a
@@ -66,6 +84,10 @@ function ItemCardImpl({
           onError={() => setCoverErrored(true)}
           className="-mx-4 -mt-4 aspect-video w-[calc(100%+2rem)] rounded-t-xl object-cover"
         />
+      )}
+
+      {showPlaceholder && (
+        <CoverPlaceholder seed={coverSeed(item)} label={sourceName} />
       )}
 
       <div className="text-muted-foreground flex items-center gap-2 text-xs">
