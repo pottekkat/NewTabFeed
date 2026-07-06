@@ -138,7 +138,12 @@ function normalizeRss(feed: RssFeed): ParsedFeed {
     });
   }
   return withLatest(
-    { title: feed.title, siteUrl, description: feed.description },
+    {
+      title: feed.title,
+      siteUrl,
+      description: feed.description,
+      iconUrl: resolveUrl(feed.image?.url, siteUrl),
+    },
     items,
   );
 }
@@ -180,7 +185,13 @@ function normalizeAtom(feed: AtomFeed): ParsedFeed {
     });
   }
   return withLatest(
-    { title: feed.title, siteUrl, description: feed.subtitle },
+    {
+      title: feed.title,
+      siteUrl,
+      description: feed.subtitle,
+      // `icon` is the small square icon (preferred); `logo` is the wider banner.
+      iconUrl: resolveUrl(feed.icon ?? feed.logo, siteUrl),
+    },
     items,
   );
 }
@@ -205,7 +216,12 @@ function normalizeRdf(feed: RdfFeed): ParsedFeed {
     });
   }
   return withLatest(
-    { title: feed.title, siteUrl, description: feed.description },
+    {
+      title: feed.title,
+      siteUrl,
+      description: feed.description,
+      iconUrl: resolveUrl(feed.image?.url, siteUrl),
+    },
     items,
   );
 }
@@ -236,7 +252,13 @@ function normalizeJson(feed: JsonFeed): ParsedFeed {
     });
   }
   return withLatest(
-    { title: feed.title, siteUrl, description: feed.description },
+    {
+      title: feed.title,
+      siteUrl,
+      description: feed.description,
+      // JSON Feed's `icon` is the large icon; `favicon` the small one — either works.
+      iconUrl: resolveUrl(feed.icon ?? feed.favicon, siteUrl),
+    },
     items,
   );
 }

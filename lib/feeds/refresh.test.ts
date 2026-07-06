@@ -89,6 +89,30 @@ function serve(url: string, entry: Entry) {
   registry.set(url, entry);
 }
 
+/** Build an RSS document with `count` items, dated one day apart (item N newest). */
+function rssWithItems(count: number): string {
+  const items = Array.from({ length: count }, (_, i) => {
+    const n = i + 1; // Item n is n days after the epoch base → higher n is newer.
+    const date = new Date(Date.UTC(2024, 0, n)).toUTCString();
+    return `<item>
+      <title>Item ${n}</title>
+      <link>https://example.com/posts/${n}</link>
+      <guid isPermaLink="false">tag:example.com,2024:/posts/${n}</guid>
+      <pubDate>${date}</pubDate>
+      <description>Body ${n}</description>
+    </item>`;
+  }).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Many Items</title>
+    <link>https://example.com</link>
+    <description>A feed with a back-catalogue</description>
+    ${items}
+  </channel>
+</rss>`;
+}
+
 describe('subscribe', () => {
   it('creates a feed and its items from a fetched document', async () => {
     serve(FEED_URL, { body: fixture('rss2.xml'), etag: 'W/"v1"' });
@@ -101,6 +125,32 @@ describe('subscribe', () => {
     expect(feed.error).toBeNull();
     expect(addedItems).toBe(2);
     expect(await listItems()).toHaveLength(2);
+  });
+
+  it("persists the feed's declared icon as an absolute iconUrl", async () => {
+    serve(FEED_URL, { body: fixture('rss2.xml') });
+    const { feed } = await subscribe(FEED_URL);
+    // rss2.xml declares <image><url>/logo.png</url>, resolved against the site.
+    expect(feed.iconUrl).toBe('https://example.com/logo.png');
+    expect((await getFeed(FEED_URL))?.iconUrl).toBe(
+      'https://example.com/logo.png',
+    );
+  });
+
+  it('stores only the newest 10 items when a feed has more', async () => {
+    // 15 items dated one day apart; item 15 is the newest.
+    serve(FEED_URL, { body: rssWithItems(15) });
+    const { addedItems } = await subscribe(FEED_URL);
+    expect(addedItems).toBe(10);
+
+    const stored = await listItems();
+    expect(stored).toHaveLength(10);
+    // The newest 10 (items 15..6) are kept; the 5 oldest are dropped.
+    const titles = stored.map((i) => i.title).sort();
+    expect(titles).toContain('Item 15');
+    expect(titles).toContain('Item 6');
+    expect(titles).not.toContain('Item 5');
+    expect(titles).not.toContain('Item 1');
   });
 
   it('canonicalizes the URL so it is the feed id', async () => {

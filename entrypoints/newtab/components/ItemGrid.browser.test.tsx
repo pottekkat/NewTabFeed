@@ -3,7 +3,10 @@ import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import type { Feed, FeedItem } from '@/lib/types';
 
-vi.mock('../lib/favicon', () => ({ faviconUrl: () => undefined }));
+vi.mock('../lib/favicon', () => ({
+  faviconUrl: () => undefined,
+  originFaviconUrl: () => undefined,
+}));
 
 import { ItemGrid } from './ItemGrid';
 

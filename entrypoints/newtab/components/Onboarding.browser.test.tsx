@@ -18,7 +18,10 @@ vi.mock('../lib/use-settings', () => ({
   },
 }));
 
-vi.mock('../lib/favicon', () => ({ faviconUrl: () => undefined }));
+vi.mock('../lib/favicon', () => ({
+  faviconUrl: () => undefined,
+  originFaviconUrl: () => undefined,
+}));
 
 import { Onboarding } from './Onboarding';
 

@@ -4,6 +4,8 @@
   "home_page_url": "https://json.example.com/",
   "feed_url": "https://json.example.com/feed.json",
   "description": "A feed made of braces",
+  "icon": "https://json.example.com/icon-512.png",
+  "favicon": "https://json.example.com/favicon-64.png",
   "authors": [
     { "name": "Tim Berners-Lee", "url": "https://json.example.com/tim" }
   ],

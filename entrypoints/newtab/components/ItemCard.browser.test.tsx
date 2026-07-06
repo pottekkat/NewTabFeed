@@ -8,6 +8,7 @@ import type { FeedItem } from '@/lib/types';
 // isolation.
 vi.mock('../lib/favicon', () => ({
   faviconUrl: () => undefined,
+  originFaviconUrl: () => undefined,
 }));
 
 import { ItemCard } from './ItemCard';
@@ -110,6 +111,57 @@ describe('ItemCard', () => {
     expect(read.container.querySelector('[aria-label="Unread"]')).toBeNull();
     // Read cards are dimmed and flagged for styling.
     expect(read.container.querySelector('[data-read="true"]')).not.toBeNull();
+  });
+
+  it('renders a cover image when the item has a thumbnail', async () => {
+    const screen = await render(
+      <ItemCard
+        item={makeItem({ thumbnailUrl: 'https://example.com/cover.jpg' })}
+        sourceName="Example News"
+        siteUrl="https://example.com"
+        density="comfortable"
+        onOpen={() => {}}
+      />,
+    );
+
+    const cover = screen.container.querySelector(
+      'img[src="https://example.com/cover.jpg"]',
+    );
+    expect(cover).not.toBeNull();
+  });
+
+  it('renders no cover image when the item has no thumbnail', async () => {
+    const screen = await render(
+      <ItemCard
+        item={makeItem()}
+        sourceName="Example News"
+        siteUrl="https://example.com"
+        density="comfortable"
+        onOpen={() => {}}
+      />,
+    );
+
+    // The only images the card can show are the cover and the favicon; the
+    // favicon mock yields no URL, so there should be no <img> at all.
+    expect(screen.container.querySelector('img')).toBeNull();
+  });
+
+  it('omits the cover image in compact density', async () => {
+    const screen = await render(
+      <ItemCard
+        item={makeItem({ thumbnailUrl: 'https://example.com/cover.jpg' })}
+        sourceName="Example News"
+        siteUrl="https://example.com"
+        density="compact"
+        onOpen={() => {}}
+      />,
+    );
+
+    expect(
+      screen.container.querySelector(
+        'img[src="https://example.com/cover.jpg"]',
+      ),
+    ).toBeNull();
   });
 
   it('calls onOpen when the card is clicked', async () => {

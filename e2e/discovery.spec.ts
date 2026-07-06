@@ -50,7 +50,7 @@ test('a plain page offers a probe that finds a well-known feed', async ({
   ).toBeVisible();
 
   // Probing the origin hits a conventional location (/rss) and surfaces a feed.
-  await popup.getByRole('button', { name: 'Check common locations' }).click();
+  await popup.getByRole('button', { name: 'Check for RSS feeds' }).click();
   const subscribe = popup.getByRole('button', { name: 'Subscribe' }).first();
   await expect(subscribe).toBeVisible();
   await subscribe.click();

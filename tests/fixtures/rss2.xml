@@ -8,6 +8,11 @@
     <link>https://example.com</link>
     <description>Reviews of things with buttons</description>
     <language>en-us</language>
+    <image>
+      <url>/logo.png</url>
+      <title>Gadgets &amp; Gizmos</title>
+      <link>https://example.com</link>
+    </image>
     <lastBuildDate>Wed, 02 Oct 2024 15:00:00 GMT</lastBuildDate>
     <item>
       <title>The Best &amp; Worst Keyboards of 2024</title>

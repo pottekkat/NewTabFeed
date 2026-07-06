@@ -210,7 +210,7 @@ function ReadyView({
     <div className="flex flex-col items-start gap-3 py-1">
       <p className="text-muted-foreground text-sm">
         {probed
-          ? 'No feeds found at common locations for this site.'
+          ? 'No RSS feeds found for this site.'
           : 'No feed advertised on this page.'}
       </p>
       {probeError && <p className="text-destructive text-xs">{probeError}</p>}
@@ -227,7 +227,7 @@ function ReadyView({
           ) : (
             <Radar className="size-4" />
           )}
-          Check common locations
+          Check for RSS feeds
         </Button>
       )}
     </div>

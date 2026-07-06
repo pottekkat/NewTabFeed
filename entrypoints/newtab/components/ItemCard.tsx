@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import type { FeedItem } from '@/lib/types';
 import type { LayoutDensity } from '@/lib/settings';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,8 @@ interface ItemCardProps {
   /** Display name of the owning feed (customTitle || title). */
   sourceName: string;
   siteUrl: string | undefined;
+  /** The owning feed's declared icon URL, tried first for the favicon. */
+  iconUrl?: string;
   density: LayoutDensity;
   /** Called when the card is opened (plain, middle, or modified click). */
   onOpen: (item: FeedItem) => void;
@@ -20,6 +22,7 @@ function ItemCardImpl({
   item,
   sourceName,
   siteUrl,
+  iconUrl,
   density,
   onOpen,
 }: ItemCardProps) {
@@ -29,6 +32,10 @@ function ItemCardImpl({
     () => (compact ? '' : excerpt(item.summaryHtml)),
     [compact, item.summaryHtml],
   );
+
+  // Cover image: comfortable density only, hidden if it fails to load.
+  const [coverErrored, setCoverErrored] = useState(false);
+  const showCover = !compact && Boolean(item.thumbnailUrl) && !coverErrored;
 
   return (
     <a
@@ -48,8 +55,21 @@ function ItemCardImpl({
         item.read && 'opacity-60 hover:opacity-100',
       )}
     >
+      {showCover && (
+        // Bleed to the card's edges (counter the p-4 padding) so the cover sits
+        // flush against the top; top corners match the card's rounding.
+        <img
+          src={item.thumbnailUrl}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          onError={() => setCoverErrored(true)}
+          className="-mx-4 -mt-4 aspect-video w-[calc(100%+2rem)] rounded-t-xl object-cover"
+        />
+      )}
+
       <div className="text-muted-foreground flex items-center gap-2 text-xs">
-        <Favicon siteUrl={siteUrl} fallback={sourceName} />
+        <Favicon siteUrl={siteUrl} iconUrl={iconUrl} fallback={sourceName} />
         <span className="truncate font-medium">{sourceName}</span>
         <span aria-hidden="true">·</span>
         <time

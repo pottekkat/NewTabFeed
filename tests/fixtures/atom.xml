@@ -5,6 +5,8 @@
   <link href="https://blog.example.org/" rel="alternate"/>
   <link href="https://blog.example.org/atom.xml" rel="self"/>
   <id>https://blog.example.org/</id>
+  <icon>/favicon.ico</icon>
+  <logo>https://blog.example.org/logo-wide.png</logo>
   <updated>2024-10-02T18:00:00Z</updated>
   <author><name>Grace Hopper</name></author>
   <entry>

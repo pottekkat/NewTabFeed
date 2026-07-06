@@ -81,6 +81,7 @@ export function ItemGrid({
               item={item}
               sourceName={sourceOf(feed, item.feedId)}
               siteUrl={feed?.siteUrl}
+              iconUrl={feed?.iconUrl}
               density={density}
               onOpen={onOpen}
             />

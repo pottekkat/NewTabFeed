@@ -23,6 +23,8 @@ export interface Feed {
   url: string;
   /** Canonical site/home URL, when the feed advertises one. */
   siteUrl?: string;
+  /** Absolute URL of the feed's own icon/logo, when it declares one. */
+  iconUrl?: string;
   /** Title as reported by the feed. */
   title: string;
   /** User override; when set, the UI shows this instead of `title`. */

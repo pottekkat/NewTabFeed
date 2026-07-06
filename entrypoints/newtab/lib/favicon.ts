@@ -20,3 +20,20 @@ export function faviconUrl(
   });
   return browser.runtime.getURL(`/_favicon/?${params.toString()}`);
 }
+
+/**
+ * The site's own `/favicon.ico`, derived from its origin. Loaded as an ordinary
+ * `<img>` (no host permission needed) — a local-first path that hits only the
+ * site itself, never a third-party favicon service. Returns undefined when
+ * there's no valid site URL to key off.
+ */
+export function originFaviconUrl(
+  siteUrl: string | undefined,
+): string | undefined {
+  if (!siteUrl) return undefined;
+  try {
+    return `${new URL(siteUrl).origin}/favicon.ico`;
+  } catch {
+    return undefined;
+  }
+}

@@ -27,6 +27,12 @@ const BACKOFF_BASE_MS = 15 * 60_000; // 15 minutes
 const BACKOFF_MAX_MS = 6 * 60 * 60_000; // 6 hours
 /** Default concurrency for refreshing many feeds at once. */
 const DEFAULT_CONCURRENCY = 6;
+/**
+ * On first subscribe, only keep the newest N items. Later refreshes merge in
+ * new items on top, so nothing is lost — this just avoids flooding a brand-new
+ * subscription with a feed's entire back-catalogue.
+ */
+const MAX_ITEMS_ON_SUBSCRIBE = 10;
 
 export class AlreadySubscribedError extends Error {
   constructor(public readonly url: string) {
@@ -100,6 +106,7 @@ export async function subscribe(rawUrl: string): Promise<SubscribeResult> {
     id: url,
     url,
     siteUrl: resolveUrl(parsed.feed.siteUrl, url),
+    iconUrl: resolveUrl(parsed.feed.iconUrl, url),
     title: parsed.feed.title?.trim() || hostnameOf(url),
     description: parsed.feed.description,
     addedAt: now,
@@ -111,7 +118,13 @@ export async function subscribe(rawUrl: string): Promise<SubscribeResult> {
   };
 
   await upsertFeed(feed);
-  const items = parsed.items.map((i) => toFeedItem(feed.id, i, now));
+  // Keep only the newest items on first subscribe. Sort a copy (undefined dates
+  // sort last / oldest) so we don't disturb the parsed order or the already-
+  // computed feed.lastPublishedAt.
+  const newest = [...parsed.items]
+    .sort((a, b) => (b.publishedAt ?? -Infinity) - (a.publishedAt ?? -Infinity))
+    .slice(0, MAX_ITEMS_ON_SUBSCRIBE);
+  const items = newest.map((i) => toFeedItem(feed.id, i, now));
   const addedItems = await upsertItems(items);
   await pruneFeed(feed.id);
   return { feed, addedItems };
@@ -184,6 +197,7 @@ export async function refreshFeed(
     // Respect a user's custom title; otherwise track the feed's own title.
     title: parsed.feed.title?.trim() || feed.title,
     siteUrl: resolveUrl(parsed.feed.siteUrl, feed.url) ?? feed.siteUrl,
+    iconUrl: resolveUrl(parsed.feed.iconUrl, feed.url) ?? feed.iconUrl,
     description: parsed.feed.description ?? feed.description,
     lastFetchedAt: now,
     lastPublishedAt: maxDefined(

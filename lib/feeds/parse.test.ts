@@ -11,6 +11,11 @@ describe('parseFeed — RSS 2.0', () => {
     expect(parsed.feed.description).toBe('Reviews of things with buttons');
   });
 
+  it('extracts the channel image as an absolute iconUrl', () => {
+    // The fixture declares a relative <image><url>/logo.png</url>.
+    expect(parsed.feed.iconUrl).toBe('https://example.com/logo.png');
+  });
+
   it('decodes entities in item titles', () => {
     expect(parsed.items[0].title).toBe('The Best & Worst Keyboards of 2024');
   });
@@ -51,6 +56,10 @@ describe('parseFeed — Atom 1.0', () => {
 
   it('resolves the alternate link as the site URL', () => {
     expect(parsed.feed.siteUrl).toBe('https://blog.example.org/');
+  });
+
+  it('prefers <icon> over <logo> and resolves it to an absolute iconUrl', () => {
+    expect(parsed.feed.iconUrl).toBe('https://blog.example.org/favicon.ico');
   });
 
   it('uses the entry id as guid and the alternate link as url', () => {
@@ -101,6 +110,10 @@ describe('parseFeed — JSON Feed 1.1', () => {
 
   it('reads home_page_url as the site URL', () => {
     expect(parsed.feed.siteUrl).toBe('https://json.example.com/');
+  });
+
+  it('prefers icon over favicon for iconUrl', () => {
+    expect(parsed.feed.iconUrl).toBe('https://json.example.com/icon-512.png');
   });
 
   it('uses content_html and the item image', () => {
