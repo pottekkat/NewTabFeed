@@ -37,12 +37,27 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Cache the Playwright browser download (keyed on the pinned Playwright
+      # version) so component + e2e runs don't re-fetch Chromium every time.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
       - name: Install Playwright Chromium
         run: pnpm exec playwright install chromium --with-deps
+
+      - name: Component tests
+        run: pnpm test:components
 
       - name: End-to-end tests
         run: pnpm test:e2e
 
+      # `wxt zip` runs its own production build, so this packages the NORMAL
+      # manifest (no host_permissions), not the WXT_E2E build left in .output.
       - name: Package extension
         run: pnpm zip
 

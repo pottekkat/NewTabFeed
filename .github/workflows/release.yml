@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # Chrome Web Store secrets are surfaced as env vars so steps can gate on them
+    # (secrets can't be referenced directly in `if:`). Leave them unset and the
+    # store-upload step is simply skipped — the GitHub Release still happens.
+    env:
+      CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Component tests
+        run: pnpm test:components
+
+      - name: End-to-end tests
+        run: pnpm test:e2e
+
+      - name: Package extension
+        run: pnpm zip
+
+      - name: Locate package
+        id: pkg
+        run: echo "zip=$(ls .output/*.zip | head -n1)" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.pkg.outputs.zip }}
+          generate_release_notes: true
+
+      # Optional: publish to the Chrome Web Store only when store secrets exist.
+      # `publish: false` uploads a new draft version for manual review in the
+      # dashboard rather than pushing it live.
+      - name: Upload to Chrome Web Store
+        if: ${{ env.CWS_EXTENSION_ID != '' }}
+        uses: mnao305/chrome-extension-upload@v6
+        with:
+          file-path: ${{ steps.pkg.outputs.zip }}
+          extension-id: ${{ env.CWS_EXTENSION_ID }}
+          client-id: ${{ env.CWS_CLIENT_ID }}
+          client-secret: ${{ env.CWS_CLIENT_SECRET }}
+          refresh-token: ${{ env.CWS_REFRESH_TOKEN }}
+          publish: false

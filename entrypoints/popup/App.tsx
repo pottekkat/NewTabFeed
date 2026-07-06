@@ -51,10 +51,17 @@ export default function App() {
       setPhase('no-access');
       return;
     }
-    const [active] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
+    // Test seam: e2e opens this popup as a regular tab (`popup.html?tabId=<n>`),
+    // where the "active tab" is the popup itself. When `tabId` is present we look
+    // that tab up directly instead of querying the active tab. Real popup use
+    // never sets this param and takes the query path below.
+    const overrideTabId = new URLSearchParams(window.location.search).get(
+      'tabId',
+    );
+    const active =
+      overrideTabId !== null
+        ? await browser.tabs.get(Number(overrideTabId))
+        : (await browser.tabs.query({ active: true, currentWindow: true }))[0];
     const origin = originOf(active?.url);
     setTab({ id: active?.id, origin });
 

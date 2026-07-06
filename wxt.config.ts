@@ -34,6 +34,23 @@ export default defineConfig({
     // permissions WXT injected. `optional_host_permissions` is untouched.
     'build:manifestGenerated'(_wxt, manifest) {
       delete manifest.host_permissions;
+
+      // E2E-only escape hatch. Playwright cannot click Chrome's native
+      // optional-permission dialog, so the test build grants `<all_urls>` at
+      // install time instead — letting the service worker fetch fixture feeds
+      // and register the discovery content script without a runtime prompt.
+      // Guarded by WXT_E2E so PRODUCTION builds keep host access optional and
+      // runtime-requested (no host_permissions, no install-time host warning).
+      // Re-added AFTER the delete above so it survives the neutralization.
+      //
+      // The overlapping `optional_host_permissions` must be dropped too: Chrome
+      // treats a pattern listed as optional as ungranted-until-requested even
+      // when it also appears in required `host_permissions`, so leaving it would
+      // keep `<all_urls>` ungranted at install and defeat the whole point.
+      if (process.env.WXT_E2E === 'true') {
+        manifest.host_permissions = ['<all_urls>'];
+        delete manifest.optional_host_permissions;
+      }
     },
   },
   vite: () => ({
