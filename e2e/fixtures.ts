@@ -19,9 +19,9 @@ const extensionPath = resolve(here, '../dist/chrome-mv3');
 // and the discovery script registers without a native permission prompt, which
 // Playwright can't drive).
 //
-// Fixtures are test-scoped, so every test gets a brand-new persistent profile —
-// a clean IndexedDB and unset settings (onboarding starts fresh)—and its own
-// fixture server on a fresh port.
+// Fixtures are test-scoped, so every test gets a brand-new persistent
+// profile—a clean IndexedDB and unset settings (onboarding starts fresh)—and
+// its own fixture server on a fresh port.
 export const test = base.extend<{
   context: BrowserContext;
   extensionId: string;

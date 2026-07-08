@@ -9,52 +9,54 @@ your device. This document explains, honestly, what it does and does not do.
 
 All of the following live only in your browser, on your device:
 
-- **Your subscriptions**—the feeds you add, plus any custom titles you set.
-- **Feed items**—the articles fetched from your feeds, cached for offline reading.
-- **Read state**—which items you've opened.
-- **Settings**—theme, layout density, refresh interval, and similar preferences.
+- Your subscriptions: the feeds you add, plus any custom titles you set.
+- Feed items: the articles fetched from your feeds, cached for offline reading.
+- Read state: which items you've opened.
+- Settings: theme, layout density, refresh interval, and similar preferences.
 
-Subscriptions and items are stored in IndexedDB; settings are stored in the
+Subscriptions and items are stored in IndexedDB. Settings are stored in the
 extension's local storage. Nothing is written to a server we control, because
 there is no such server.
 
 ## What NewTabFeed sends over the network
 
-- **Feed fetches.** To show you new items, NewTabFeed fetches each feed you
-  subscribe to **directly from that feed's own server** (for example, a blog's
-  `/feed.xml`). These requests go to the sites you chose, and nowhere else.
-- **Feed discovery / probing.** When you ask the popup to check the page you're
-  on, or to "check common locations", NewTabFeed makes requests to **that site's
-  origin only**, to see whether it publishes a feed.
-- **Link previews (optional, on by default).** When a feed item ships no image or
-  only a thin summary, NewTabFeed fetches that item's article page once, straight
-  from its own site, and reads a cover image and description from the page's Open
-  Graph and meta tags. These requests carry no cookies. You can turn link previews
-  off in Settings.
-- **Site icons.** To show a feed's favicon, NewTabFeed fetches the icon from that
-  feed's own site (its homepage `<link>` tags or `/favicon.ico`) and caches it
-  locally. These requests carry no cookies, and no third-party icon service is
-  ever contacted.
+To show you new items, NewTabFeed fetches each feed you subscribe to directly
+from that feed's own server (for example, a blog's `/feed.xml`). These requests
+go to the sites you chose, and nowhere else.
+
+When you ask the popup to check the page you're on, or to check common
+locations, NewTabFeed makes requests to that site's origin only, to see whether
+it publishes a feed.
+
+Link previews are optional and on by default. When a feed item ships no image or
+only a thin summary, NewTabFeed fetches that item's article page once, straight
+from its own site, and reads a cover image and description from the page's Open
+Graph and meta tags. These requests carry no cookies. You can turn link previews
+off in Settings.
+
+To show a feed's favicon, NewTabFeed fetches the icon from that feed's own site
+(its homepage `<link>` tags or `/favicon.ico`) and caches it locally. These
+requests carry no cookies, and no third-party icon service is ever contacted.
 
 That's the complete list. There are no requests to NewTabFeed servers, because
 there are none.
 
-## What NewTabFeed does NOT do
+## What NewTabFeed does not do
 
-- **No accounts, no sign-in, no sync servers.**
-- **No analytics, telemetry, or tracking** of any kind.
-- **No advertising, and no selling or sharing of data.** There is no data to sell.
-- **No third-party favicon service.** Icons come from each feed's own site, or
-  from Chrome's built-in `_favicon/` cache as a fallback. NewTabFeed never calls
-  an external icon provider.
+- No accounts, no sign-in, no sync servers.
+- No analytics, telemetry, or tracking of any kind.
+- No advertising, and no selling or sharing of data. There is no data to sell.
+- No third-party favicon service. Icons come from each feed's own site, or from
+  Chrome's built-in `_favicon/` cache as a fallback. NewTabFeed never calls an
+  external icon provider.
 
 ## Permissions
 
 NewTabFeed requests the narrowest permissions it can. Host access to sites
-(`<all_urls>`) is an **optional** permission that is requested only when you
-first add a feed, so the browser shows a single, clear prompt—it is never
-requested at install. See [CHROMEWEBSTORE.md](./CHROMEWEBSTORE.md) for the full
-per-permission justification.
+(`<all_urls>`) is an optional permission, requested only when you first add a
+feed, so the browser shows a single, clear prompt. It is never requested at
+install. See [CHROMEWEBSTORE.md](./CHROMEWEBSTORE.md) for the full per-permission
+justification.
 
 ## Your control over your data
 

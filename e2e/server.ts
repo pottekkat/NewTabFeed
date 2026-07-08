@@ -14,7 +14,6 @@
 
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import sharp from 'sharp';
 
 export interface FixtureServer {
   /** Base origin, e.g. `http://localhost:54321` (no trailing slash). */
@@ -190,215 +189,6 @@ export function makePreviewRss(base: string): string {
 </rss>`;
 }
 
-// --- Store-screenshot capture data -----------------------------------------
-//
-// The store screenshots need a grid that looks like a real reader: several
-// sources, a mix of real cover images and generated placeholders, varied
-// titles and short summaries, and recent timestamps. The plain `/rss.xml`
-// fixture (ten identical items, no covers) is built for assertions, not looks,
-// so capture uses its own richer feeds served under `/capture/*`. All of it is
-// fixture data on this local origin—no real sites are ever fetched.
-
-interface CaptureItem {
-  title: string;
-  summary: string;
-  /** Cover image number under `/capture/cover/<n>.png`, or none for a placeholder. */
-  cover?: number;
-  /** How long ago the item was published, so relative times read as "2h ago". */
-  minutesAgo: number;
-}
-
-interface CaptureFeed {
-  /** Path the feed is served at, e.g. `/capture/signal.xml`. */
-  path: string;
-  title: string;
-  /** Icon number under `/capture/icon/<n>.svg`. */
-  icon: number;
-  items: CaptureItem[];
-}
-
-export const CAPTURE_FEEDS: readonly CaptureFeed[] = [
-  {
-    path: '/capture/signal.xml',
-    title: 'Signal',
-    icon: 1,
-    items: [
-      {
-        title: 'A small team shipped a browser in eighteen months',
-        summary:
-          'The engine is boring on purpose. The interesting part is how they said no to almost everything.',
-        cover: 1,
-        minutesAgo: 14,
-      },
-      {
-        title: 'Local-first software, five years on',
-        summary:
-          'What held up, what did not, and why sync is still the hard part nobody wants to own.',
-        cover: 2,
-        minutesAgo: 96,
-      },
-      {
-        title: 'Reading RSS in 2026 without a single server',
-        summary:
-          'Feeds never went away. The plumbing just got quieter, and now it fits in a new tab.',
-        minutesAgo: 175,
-      },
-    ],
-  },
-  {
-    path: '/capture/orbital.xml',
-    title: 'Orbital Notes',
-    icon: 2,
-    items: [
-      {
-        title: 'The quietest place we have ever built',
-        summary:
-          'Inside an anechoic chamber, engineers listen to hardware the way a doctor listens to a heart.',
-        cover: 3,
-        minutesAgo: 38,
-      },
-      {
-        title: 'A field guide to the winter sky',
-        summary:
-          'Four constellations, one planet, and the one meteor shower worth setting an alarm for.',
-        cover: 4,
-        minutesAgo: 210,
-      },
-      {
-        title: 'Why the next telescope folds like origami',
-        summary:
-          'It has to fit in a rocket, then unfold in the cold with no one there to fix it.',
-        minutesAgo: 320,
-      },
-    ],
-  },
-  {
-    path: '/capture/foundry.xml',
-    title: 'The Type Foundry',
-    icon: 3,
-    items: [
-      {
-        title: 'The comeback of the workhorse serif',
-        summary:
-          'For a decade everything went geometric and sans. Editors are quietly walking it back.',
-        cover: 5,
-        minutesAgo: 52,
-      },
-      {
-        title: 'Designing an icon set that survives dark mode',
-        summary:
-          'One stroke width, two backgrounds, and a lot of squinting at 16 pixels.',
-        cover: 6,
-        minutesAgo: 132,
-      },
-      {
-        title: 'Color, contrast, and the myth of pure black',
-        summary:
-          'Nobody reads long-form on #000. Here is the range that actually stays comfortable.',
-        minutesAgo: 265,
-      },
-    ],
-  },
-  {
-    path: '/capture/fieldguide.xml',
-    title: 'Field Guide',
-    icon: 4,
-    items: [
-      {
-        title: 'How a city learned to plant for the heat',
-        summary:
-          'Species lists are getting rewritten street by street as summers stretch longer.',
-        cover: 7,
-        minutesAgo: 74,
-      },
-      {
-        title: 'The slow return of the urban river',
-        summary:
-          'Concrete channels are coming up. Underneath, the water remembers where it used to go.',
-        cover: 8,
-        minutesAgo: 158,
-      },
-      {
-        title: 'Notes from a week without notifications',
-        summary:
-          'Nothing broke. A few things got missed. Most of them did not matter.',
-        minutesAgo: 402,
-      },
-    ],
-  },
-];
-
-/** Build one capture feed as RSS 2.0, timestamps relative to now. */
-export function makeCaptureFeed(base: string, feed: CaptureFeed): string {
-  const items = feed.items
-    .map((item) => {
-      const pub = new Date(Date.now() - item.minutesAgo * 60_000).toUTCString();
-      const link = `${base}/posts/${encodeURIComponent(item.title.slice(0, 24))}`;
-      // A real cover rides inline in the body as a PNG (feedsmith lifts the
-      // first content <img> into thumbnailUrl); items with no cover get a
-      // generated placeholder.
-      const body =
-        item.cover === undefined
-          ? item.summary
-          : `<![CDATA[<p>${item.summary}</p><img src="${base}/capture/cover/${item.cover}.png" alt="" />]]>`;
-      return `    <item>
-      <title>${item.title}</title>
-      <link>${link}</link>
-      <guid isPermaLink="false">capture-${feed.icon}-${item.minutesAgo}</guid>
-      <pubDate>${pub}</pubDate>
-      <description>${body}</description>
-    </item>`;
-    })
-    .join('\n');
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>${feed.title}</title>
-    <link>${base}</link>
-    <description>NewTabFeed capture fixture: ${feed.title}.</description>
-    <image>
-      <url>${base}/capture/icon/${feed.icon}.svg</url>
-      <title>${feed.title}</title>
-      <link>${base}</link>
-    </image>
-${items}
-  </channel>
-</rss>`;
-}
-
-/** A soft two-stop gradient cover with a light geometric motif, 640×360. */
-function captureCoverSvg(n: number): string {
-  const hue = (n * 47) % 360;
-  const hue2 = (hue + 40) % 360;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="hsl(${hue} 62% 58%)" />
-      <stop offset="1" stop-color="hsl(${hue2} 58% 46%)" />
-    </linearGradient>
-  </defs>
-  <rect width="640" height="360" fill="url(#g)" />
-  <g fill="#ffffff" fill-opacity="0.12">
-    <circle cx="512" cy="96" r="120" />
-    <circle cx="120" cy="300" r="80" />
-  </g>
-  <g stroke="#ffffff" stroke-opacity="0.18" stroke-width="2" fill="none">
-    <path d="M0 260 L200 180 L400 240 L640 150" />
-  </g>
-</svg>`;
-}
-
-/** A small rounded-square source icon carrying a single letter, 32×32. */
-function captureIconSvg(n: number): string {
-  const hue = (n * 63) % 360;
-  const letters = ['S', 'O', 'F', 'G'];
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="hsl(${hue} 60% 52%)" />
-  <text x="16" y="22" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff">${letters[(n - 1) % letters.length]}</text>
-</svg>`;
-}
-
 function pageWithFeed(base: string): string {
   return `<!doctype html>
 <html lang="en">
@@ -421,9 +211,6 @@ const PAGE_PLAIN = `<!doctype html>
 export async function startFixtureServer(): Promise<FixtureServer> {
   let rssBody = '';
   let atomBody = '';
-  // Capture covers are rasterized once at startup: the card's cover extraction
-  // rejects SVG srcs (they're often icons/spacers), so covers must be real PNGs.
-  const coverPngs = new Map<number, Buffer>();
 
   const server: Server = createServer((req, res) => {
     const path = (req.url ?? '/').split('?')[0];
@@ -431,31 +218,6 @@ export async function startFixtureServer(): Promise<FixtureServer> {
       res.writeHead(status, { 'content-type': type });
       res.end(body);
     };
-
-    // Store-capture routes live outside the switch because covers/icons carry a
-    // dynamic id in the path. Feeds match exactly against CAPTURE_FEEDS.
-    if (path.startsWith('/capture/cover/')) {
-      const n = Number(
-        path.slice('/capture/cover/'.length).replace('.png', ''),
-      );
-      const png = coverPngs.get(n);
-      if (!png) return send(404, 'text/plain', 'no such cover');
-      res.writeHead(200, { 'content-type': 'image/png' });
-      res.end(png);
-      return;
-    }
-    if (path.startsWith('/capture/icon/')) {
-      const n = Number(path.slice('/capture/icon/'.length).replace('.svg', ''));
-      return send(200, 'image/svg+xml; charset=utf-8', captureIconSvg(n));
-    }
-    const captureFeed = CAPTURE_FEEDS.find((f) => f.path === path);
-    if (captureFeed) {
-      return send(
-        200,
-        'application/rss+xml; charset=utf-8',
-        makeCaptureFeed(base, captureFeed),
-      );
-    }
 
     switch (path) {
       case '/rss.xml':
@@ -505,22 +267,6 @@ export async function startFixtureServer(): Promise<FixtureServer> {
   const base = `http://localhost:${port}`;
   rssBody = makeRss(base, 10);
   atomBody = makeAtom(base);
-
-  // Rasterize every cover an item references, so `/capture/cover/<n>.png` can
-  // serve real PNG bytes on demand.
-  const coverNumbers = new Set(
-    CAPTURE_FEEDS.flatMap((f) => f.items)
-      .map((i) => i.cover)
-      .filter((n): n is number => n !== undefined),
-  );
-  await Promise.all(
-    [...coverNumbers].map(async (n) => {
-      const png = await sharp(Buffer.from(captureCoverSvg(n)))
-        .png()
-        .toBuffer();
-      coverPngs.set(n, png);
-    }),
-  );
 
   return {
     url: base,

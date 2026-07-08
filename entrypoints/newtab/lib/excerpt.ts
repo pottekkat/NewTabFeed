@@ -82,8 +82,8 @@ function isLinkOnly(fragment: DocumentFragment): boolean {
  * True when the text is only aggregator metadata, not prose—e.g. hnrss's
  * "Article URL: … Comments URL: … Points: N # Comments: N". We strip URLs, the
  * known labels, and any digits/punctuation; if nothing but that remains, there
- * is no real summary to show. ("Article URL"/"Comments URL" aren't RSS fields —
- * just text hnrss packs into the description; the canonical link is `<link>`.)
+ * is no real summary to show. ("Article URL"/"Comments URL" aren't RSS
+ * fields—just text hnrss packs into the description; the canonical link is `<link>`.)
  */
 function isMetadataOnly(text: string): boolean {
   const residue = text

@@ -35,7 +35,7 @@ function stubWxtImports() {
 
 // Two projects:
 //
-// - `node` —the fast, headless default (`pnpm test`, CI). Pure logic and
+// - `node`—the fast, headless default (`pnpm test`, CI). Pure logic and
 //   worker-side domain tests, with the WXT test plugin (fakeBrowser, `#imports`,
 //   aliases). `node` env avoids the WxtVitest + jsdom friction (wxt#1575).
 //   Browser-only specs (`*.browser.test.*`) are excluded here.

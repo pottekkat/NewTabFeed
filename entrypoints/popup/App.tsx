@@ -22,8 +22,8 @@ type Phase = 'loading' | 'no-access' | 'ready';
 
 /**
  * What kind of page the active tab is:
- * - `web`  —a regular http(s) site we can look for feeds on.
- * - `own`  —NewTabFeed's own page (the new tab / reader). Probing it is
+ * - `web`—a regular http(s) site we can look for feeds on.
+ * - `own`—NewTabFeed's own page (the new tab / reader). Probing it is
  *   meaningless—it's the reader, not a source—so we say so instead.
  * - `other`—a browser-internal page (chrome://, about:, other extensions,
  *   the web store…) where feed detection can't run.
