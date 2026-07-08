@@ -74,8 +74,10 @@ Provide at least one 1280×800 (or 640×400) screenshot. Recommended set:
 - [ ] Manage feeds dialog (rename, remove, OPML import and export).
 
 _The five 1280×800 captures live in `docs/store/` (`01`–`05`). Run `pnpm
-screenshots` to regenerate them; the grid and discovery shots use live feeds, so
-they show real articles. Re-run when the listing needs a refresh._
+screenshots` to regenerate them: each one mounts the real UI inside a mock
+browser window on a branded backdrop (see `e2e/frame.ts`), and the grid and
+discovery shots use live feeds, so they show real articles. Re-run when the
+listing needs a refresh._
 
 ## Version history
 

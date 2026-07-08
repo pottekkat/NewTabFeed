@@ -1,5 +1,6 @@
-// Chrome Web Store screenshot capture. This is not a normal test—it drives the
-// real built extension through the e2e harness and saves 1280×800 PNGs into
+// Chrome Web Store screenshot capture. This is not a normal test: it drives the
+// real built extension through the e2e harness, then mounts each capture inside
+// a mock browser window (see frame.ts) and saves the 1280x800 store PNGs into
 // `docs/store/`. It stays out of CI: every test skips unless CAPTURE=1 is set.
 //
 // Run it with `pnpm screenshots` (builds the e2e extension first, then captures).
@@ -14,6 +15,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
+import { renderFramedShot } from './frame';
 import {
   badgeText,
   openHeaderMenu,
@@ -29,6 +31,12 @@ const SIZE = { width: 1280, height: 800 } as const;
 // The grid shots wait for at least this many real items to land before firing,
 // so the page is comfortably full rather than half-loaded.
 const MIN_ITEMS = 16;
+
+/** A raw viewport capture, base64-encoded for embedding in the frame HTML. */
+async function captureBase64(page: Page): Promise<string> {
+  const buf = await page.screenshot();
+  return buf.toString('base64');
+}
 
 test.describe('store screenshots', () => {
   // Only run under `pnpm screenshots`; a plain `pnpm test:e2e` skips the whole file.
@@ -98,12 +106,20 @@ test.describe('store screenshots', () => {
     await onboardWithStarterFeeds(page);
     await waitForGrid(page);
 
-    await page.screenshot({ path: resolve(outDir, '01-newtab-light.png') });
+    await renderFramedShot(context, resolve(outDir, '01-newtab-light.png'), {
+      innerPngBase64: await captureBase64(page),
+      theme: 'light',
+      headline: { base: 'Every new tab is', accent: 'your reading list' },
+    });
 
     await page.emulateMedia({ colorScheme: 'dark' });
     await expect(page.locator('html')).toHaveClass(/dark/);
     await waitForGrid(page);
-    await page.screenshot({ path: resolve(outDir, '02-newtab-dark.png') });
+    await renderFramedShot(context, resolve(outDir, '02-newtab-dark.png'), {
+      innerPngBase64: await captureBase64(page),
+      theme: 'dark',
+      headline: { base: 'Comfortable in', accent: 'light or dark' },
+    });
   });
 
   test('03—first-run onboarding', async ({ context, extensionId }) => {
@@ -113,9 +129,26 @@ test.describe('store screenshots', () => {
     await expect(
       page.getByRole('heading', { name: 'Pick a few feeds to get started' }),
     ).toBeVisible();
-    // Favicons load best-effort; give them a moment, then shoot.
-    await page.waitForTimeout(600);
-    await page.screenshot({ path: resolve(outDir, '03-onboarding.png') });
+    // Each row shows the source's favicon, fetched live from the site. Wait for
+    // every one to finish loading (or exhaust its fallback chain) so the shot
+    // isn't missing icons; the only <img>s on this screen are those favicons.
+    await page
+      .waitForFunction(
+        () => {
+          const imgs = [...document.querySelectorAll('img')];
+          return imgs.length > 0 && imgs.every((img) => img.complete);
+        },
+        undefined,
+        { timeout: 15_000 },
+      )
+      .catch(() => {});
+    await page.waitForTimeout(500);
+
+    await renderFramedShot(context, resolve(outDir, '03-onboarding.png'), {
+      innerPngBase64: await captureBase64(page),
+      theme: 'light',
+      headline: { base: 'Start with', accent: 'a few good feeds' },
+    });
   });
 
   test('04—feed discovery popup', async ({
@@ -128,6 +161,7 @@ test.describe('store screenshots', () => {
     // Discover a feed on a real site so the popup shows a genuine source, not a
     // fixture. jvns.ca advertises an Atom feed in its <head>.
     const pageTab = await context.newPage();
+    await pageTab.setViewportSize(SIZE);
     await pageTab.goto('https://jvns.ca/', { waitUntil: 'domcontentloaded' });
     const tabId = await tabIdForUrl(background, pageTab.url());
 
@@ -138,39 +172,27 @@ test.describe('store screenshots', () => {
       .not.toBe('');
 
     const popup = await openPopup(context, extensionId, tabId);
-    await popup.setViewportSize(SIZE);
     await popup.emulateMedia({ colorScheme: 'light' });
     await expect(popup.getByRole('button', { name: 'Subscribe' })).toBeVisible({
       timeout: 15_000,
     });
+    await popup.waitForTimeout(400);
 
-    // The popup renders at its native 360px width. Center it on a soft branded
-    // backdrop so the store shot reads as an intentional frame, not a stray
-    // panel floating in the corner. This only restyles the surrounding
-    // page—the popup UI itself is the real, unmodified extension popup.
-    await popup.addStyleTag({
-      content: `
-        html, body { height: 100%; }
-        body {
-          margin: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background:
-            radial-gradient(circle at 28% 22%, rgba(249,115,22,0.14), transparent 55%),
-            radial-gradient(circle at 82% 80%, rgba(249,115,22,0.10), transparent 55%),
-            var(--background, #ffffff);
-        }
-        #root > div {
-          border-radius: 14px;
-          overflow: hidden;
-          box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
-          border: 1px solid rgba(15, 23, 42, 0.08);
-        }
-      `,
+    // Capture the popup card on its own and the page behind it, then composite:
+    // the page becomes a dimmed backdrop and the popup floats under the toolbar
+    // icon, the way the extension actually presents it.
+    const popupShot = (await popup.locator('#root > div').first().screenshot())
+      .toString('base64');
+    await pageTab.waitForTimeout(400);
+    const backdrop = await captureBase64(pageTab);
+
+    await renderFramedShot(context, resolve(outDir, '04-discovery.png'), {
+      innerPngBase64: backdrop,
+      overlayPngBase64: popupShot,
+      theme: 'light',
+      url: 'jvns.ca',
+      headline: { base: 'Subscribe', accent: 'right from the page' },
     });
-    await popup.waitForTimeout(300);
-    await popup.screenshot({ path: resolve(outDir, '04-discovery.png') });
   });
 
   test('05—manage feeds dialog', async ({ context, extensionId }) => {
@@ -186,6 +208,11 @@ test.describe('store screenshots', () => {
       page.getByRole('heading', { name: 'Manage feeds' }),
     ).toBeVisible();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: resolve(outDir, '05-manage-feeds.png') });
+
+    await renderFramedShot(context, resolve(outDir, '05-manage-feeds.png'), {
+      innerPngBase64: await captureBase64(page),
+      theme: 'light',
+      headline: { base: 'Every feed', accent: 'under your control' },
+    });
   });
 });
