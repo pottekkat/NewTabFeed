@@ -18,7 +18,8 @@ Most "discovery" new tabs decide what you should read and quietly measure how yo
 - Fetch and parse RSS, Atom, RDF, and JSON Feed on-device.
 - Card-grid new tab with favicons, source, and relative time; comfortable or compact density.
 - First-run onboarding with a curated set of starter feeds (all opt-in).
-- Add feeds by URL, or discover them from the site you're on — the toolbar icon lights up when the current page advertises a feed, and can probe common feed locations when it doesn't.
+- Add feeds by URL, or discover them from the site you're on: the toolbar icon lights up when the current page advertises a feed, and can probe common feed locations when it doesn't.
+- Optional link previews. When an item ships no image or a thin summary (common with link aggregators like Hacker News and Lobsters), NewTabFeed fetches the linked article once to pull a cover image and description from its page. On by default, and you can turn it off in Settings.
 - OPML import and export.
 - Per-feed filtering, unread-only view, and "mark all read".
 - Background refresh on a schedule you set; light and dark themes.
@@ -67,7 +68,7 @@ Built on [WXT](https://wxt.dev) (MV3) with React, Tailwind, and TypeScript. The 
 
 ## Privacy
 
-Everything stays on your device. NewTabFeed has no analytics, no accounts, and no third-party requests beyond fetching the feeds you subscribe to, directly from their own servers. Details in [PRIVACY.md](./PRIVACY.md).
+Your subscriptions and reading history stay on your device. There are no analytics and no accounts. The only network requests NewTabFeed makes go to the sites you chose: fetching your feeds from their own servers, and, when link previews are on, fetching a subscribed item's article page once to read its cover image and description. Those requests send no cookies, and nothing goes to any third party. Details in [PRIVACY.md](./PRIVACY.md).
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-07-06_
+_Last updated: 2026-07-08_
 
 NewTabFeed is a local-first RSS reader. It is built so that your data stays on
 your device. This document explains, honestly, what it does and does not do.
@@ -26,6 +26,15 @@ there is no such server.
 - **Feed discovery / probing.** When you ask the popup to check the page you're
   on, or to "check common locations", NewTabFeed makes requests to **that site's
   origin only**, to see whether it publishes a feed.
+- **Link previews (optional, on by default).** When a feed item ships no image or
+  only a thin summary, NewTabFeed fetches that item's article page once, straight
+  from its own site, and reads a cover image and description from the page's Open
+  Graph and meta tags. These requests carry no cookies. You can turn link previews
+  off in Settings.
+- **Site icons.** To show a feed's favicon, NewTabFeed fetches the icon from that
+  feed's own site (its homepage `<link>` tags or `/favicon.ico`) and caches it
+  locally. These requests carry no cookies, and no third-party icon service is
+  ever contacted.
 
 That's the complete list. There are no requests to NewTabFeed servers, because
 there are none.
@@ -35,9 +44,9 @@ there are none.
 - **No accounts, no sign-in, no sync servers.**
 - **No analytics, telemetry, or tracking** of any kind.
 - **No advertising, and no selling or sharing of data.** There is no data to sell.
-- **No third-party favicon service.** Site icons are rendered through Chrome's
-  built-in `_favicon/` API, which serves icons from the browser's own local
-  cache — NewTabFeed does not call any external favicon provider.
+- **No third-party favicon service.** Icons come from each feed's own site, or
+  from Chrome's built-in `_favicon/` cache as a fallback. NewTabFeed never calls
+  an external icon provider.
 
 ## Permissions
 
