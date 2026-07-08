@@ -32,7 +32,9 @@
     "test": "vitest run --project node",
     "test:watch": "vitest --project node",
     "test:components": "vitest run --project browser",
-    "test:e2e": "pnpm build:e2e && playwright test"
+    "test:e2e": "pnpm build:e2e && playwright test",
+    "screenshots": "CAPTURE=1 pnpm build:e2e && CAPTURE=1 playwright test store-screenshots",
+    "marketing": "node scripts/make-marketing.mjs"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.3.2",

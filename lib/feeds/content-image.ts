@@ -44,7 +44,7 @@ export function firstContentImage(
 }
 
 /** A src that can never be a real cover: `data:` URIs and SVGs. */
-function isUnusableSrc(src: string): boolean {
+export function isUnusableSrc(src: string): boolean {
   if (/^data:/i.test(src)) {
     return true;
   }

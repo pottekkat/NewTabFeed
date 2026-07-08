@@ -124,6 +124,26 @@ export function SettingsDialog({
           />
         </div>
 
+        <div className="flex items-center justify-between gap-4">
+          <Label
+            htmlFor="fetch-link-previews"
+            className="flex-col items-start gap-0.5"
+          >
+            <span>Link previews</span>
+            <span className="text-muted-foreground text-xs font-normal">
+              Fetch a cover image and summary from the linked article when the
+              feed omits them.
+            </span>
+          </Label>
+          <Switch
+            id="fetch-link-previews"
+            checked={settings.fetchLinkPreviews}
+            onCheckedChange={(v) =>
+              void settingsItems.fetchLinkPreviews.setValue(v)
+            }
+          />
+        </div>
+
         <div className="flex items-center justify-between gap-4 border-t pt-4">
           <div className="text-sm">
             <div className="font-medium">Mark all as read</div>

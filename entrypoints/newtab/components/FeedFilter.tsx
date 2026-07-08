@@ -72,7 +72,11 @@ export function FeedFilter({
                   close();
                 }}
               >
-                <Favicon siteUrl={feed.siteUrl} fallback={label(feed)} />
+                <Favicon
+                  siteUrl={feed.siteUrl}
+                  iconUrl={feed.iconUrl}
+                  fallback={label(feed)}
+                />
                 <span className="flex-1 truncate">{label(feed)}</span>
                 {feed.error && isPersistentError(feed) && (
                   <span

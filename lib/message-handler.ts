@@ -8,7 +8,13 @@ import { browser } from 'wxt/browser';
 import type { AnyResponse, RequestMessage, Response } from '@/lib/messages';
 import { FEEDS_UPDATED } from '@/lib/messages';
 import { listFeeds } from '@/lib/db';
-import { refreshAllFeeds, subscribe, unsubscribe } from '@/lib/feeds';
+import {
+  backfillFeedIcons,
+  enrichPendingPreviews,
+  refreshAllFeeds,
+  subscribe,
+  unsubscribe,
+} from '@/lib/feeds';
 import { exportOpml, importOpml } from '@/lib/opml';
 import { refreshIntervalMinutes } from '@/lib/settings';
 import { getDiscoveredFeeds, probeOrigin } from '@/lib/discovery';
@@ -34,11 +40,27 @@ async function handleRequest(message: RequestMessage): Promise<AnyResponse> {
       if (result.changed) {
         await broadcastFeedsUpdated();
       }
+      const enriched = await enrichPendingPreviews();
+      if (enriched.changed) {
+        await broadcastFeedsUpdated();
+      }
+      const icons = await backfillFeedIcons();
+      if (icons.changed) {
+        await broadcastFeedsUpdated();
+      }
       return { ok: true, data: { changed: result.changed } };
     }
     case 'subscribe': {
       const data = await subscribe(message.url);
       await broadcastFeedsUpdated();
+      const enriched = await enrichPendingPreviews();
+      if (enriched.changed) {
+        await broadcastFeedsUpdated();
+      }
+      const icons = await backfillFeedIcons();
+      if (icons.changed) {
+        await broadcastFeedsUpdated();
+      }
       return { ok: true, data };
     }
     case 'unsubscribe': {
@@ -49,6 +71,10 @@ async function handleRequest(message: RequestMessage): Promise<AnyResponse> {
     case 'import-opml': {
       const data = await importOpml(message.xml);
       if (data.added.length > 0) {
+        await broadcastFeedsUpdated();
+      }
+      const icons = await backfillFeedIcons();
+      if (icons.changed) {
         await broadcastFeedsUpdated();
       }
       return { ok: true, data };

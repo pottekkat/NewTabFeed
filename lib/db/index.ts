@@ -12,6 +12,7 @@
 
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { Feed, FeedItem } from '@/lib/types';
+import { summaryIsThin } from '@/lib/feeds/link-preview';
 
 const DB_NAME = 'newtabfeed';
 const DB_VERSION = 1;
@@ -127,6 +128,12 @@ export async function upsertItems(items: FeedItem[]): Promise<number> {
         ...item,
         read: existing.read,
         fetchedAt: existing.fetchedAt,
+        // Preserve link-preview enrichment across re-fetches: fresh feed data
+        // still wins when present, but enriched cover/excerpt survives when the
+        // feed keeps shipping none. `previewFetchedAt` sticks so we never refetch.
+        thumbnailUrl: item.thumbnailUrl ?? existing.thumbnailUrl,
+        summaryHtml: item.summaryHtml ?? existing.summaryHtml,
+        previewFetchedAt: existing.previewFetchedAt,
       });
     } else {
       await store.put(item);
@@ -135,6 +142,67 @@ export async function upsertItems(items: FeedItem[]): Promise<number> {
   }
   await tx.done;
   return added;
+}
+
+/**
+ * Return up to `limit` items (newest-first) that are candidates for
+ * link-preview enrichment: never attempted (`!previewFetchedAt`) AND missing a
+ * thumbnail OR carrying only a thin summary. Walks the global `by-published`
+ * index descending so the freshest gaps are filled first.
+ */
+export async function itemsNeedingPreview(limit: number): Promise<FeedItem[]> {
+  const db = await getDB();
+  const index = db
+    .transaction('items')
+    .objectStore('items')
+    .index('by-published');
+  const out: FeedItem[] = [];
+  let cursor = await index.openCursor(null, 'prev');
+  while (cursor && out.length < limit) {
+    const item = cursor.value;
+    if (
+      !item.previewFetchedAt &&
+      (!item.thumbnailUrl || summaryIsThin(item.summaryHtml))
+    ) {
+      out.push(item);
+    }
+    cursor = await cursor.continue();
+  }
+  return out;
+}
+
+/**
+ * Apply an enrichment result to a single item, read-modify-write. Fills the
+ * thumbnail only when the item currently lacks one and the summary only when the
+ * current one is thin; always stamps `previewFetchedAt` (even for a `{}` result,
+ * so the item is never re-fetched). No-op if the item has since been pruned.
+ */
+export async function applyPreview(
+  id: string,
+  patch: {
+    thumbnailUrl?: string;
+    summaryHtml?: string;
+    previewFetchedAt: number;
+  },
+): Promise<void> {
+  const db = await getDB();
+  const tx = db.transaction('items', 'readwrite');
+  const store = tx.objectStore('items');
+  const item = await store.get(id);
+  if (item) {
+    const updated: FeedItem = {
+      ...item,
+      previewFetchedAt: patch.previewFetchedAt,
+    };
+    if (!item.thumbnailUrl && patch.thumbnailUrl) {
+      updated.thumbnailUrl = patch.thumbnailUrl;
+    }
+    if (summaryIsThin(item.summaryHtml) && patch.summaryHtml) {
+      updated.summaryHtml = patch.summaryHtml;
+    }
+    await store.put(updated);
+  }
+  await tx.done;
 }
 
 export interface ListItemsQuery {

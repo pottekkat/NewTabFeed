@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import {
+  fetchLinkPreviews,
   getSettings,
   layoutDensity,
   markReadOnOpen,
@@ -23,6 +24,7 @@ export const settings = {
   theme,
   markReadOnOpen,
   onboardingComplete,
+  fetchLinkPreviews,
 };
 
 /**
@@ -49,6 +51,7 @@ export function useSettings(): SettingsSnapshot | null {
       theme.watch(patch('theme')),
       markReadOnOpen.watch(patch('markReadOnOpen')),
       onboardingComplete.watch(patch('onboardingComplete')),
+      fetchLinkPreviews.watch(patch('fetchLinkPreviews')),
     ];
 
     return () => {

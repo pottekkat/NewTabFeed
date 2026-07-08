@@ -14,4 +14,9 @@ declare const chrome: {
   scripting: {
     getRegisteredContentScripts(): Promise<Array<{ id: string }>>;
   };
+  storage: {
+    local: {
+      set(items: Record<string, unknown>): Promise<void>;
+    };
+  };
 };

@@ -6,6 +6,7 @@ import {
   theme,
   markReadOnOpen,
   onboardingComplete,
+  fetchLinkPreviews,
   getSettings,
 } from '@/lib/settings';
 
@@ -20,6 +21,7 @@ describe('settings defaults', () => {
     expect(await theme.getValue()).toBe('system');
     expect(await markReadOnOpen.getValue()).toBe(true);
     expect(await onboardingComplete.getValue()).toBe(false);
+    expect(await fetchLinkPreviews.getValue()).toBe(true);
   });
 
   it('getSettings snapshots all values at once', async () => {
@@ -29,6 +31,7 @@ describe('settings defaults', () => {
       theme: 'system',
       markReadOnOpen: true,
       onboardingComplete: false,
+      fetchLinkPreviews: true,
     });
   });
 });

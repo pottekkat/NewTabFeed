@@ -12,6 +12,7 @@ const setValues = vi.hoisted(() => ({
   refreshIntervalMinutes: vi.fn(),
   markReadOnOpen: vi.fn(),
   onboardingComplete: vi.fn(),
+  fetchLinkPreviews: vi.fn(),
 }));
 vi.mock('../lib/use-settings', () => ({
   settings: {
@@ -20,6 +21,7 @@ vi.mock('../lib/use-settings', () => ({
     refreshIntervalMinutes: { setValue: setValues.refreshIntervalMinutes },
     markReadOnOpen: { setValue: setValues.markReadOnOpen },
     onboardingComplete: { setValue: setValues.onboardingComplete },
+    fetchLinkPreviews: { setValue: setValues.fetchLinkPreviews },
   },
 }));
 
@@ -31,6 +33,7 @@ const snapshot: SettingsSnapshot = {
   theme: 'system',
   markReadOnOpen: true,
   onboardingComplete: true,
+  fetchLinkPreviews: true,
 };
 
 function renderDialog(
@@ -93,8 +96,18 @@ describe('SettingsDialog', () => {
 
   it('toggles mark-read-on-open', async () => {
     const screen = await renderDialog({ markReadOnOpen: true });
-    await userEvent.click(screen.getByRole('switch'));
+    await userEvent.click(
+      screen.getByRole('switch', { name: /mark read on open/i }),
+    );
     expect(setValues.markReadOnOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('reflects the link-previews setting and writes on toggle', async () => {
+    const screen = await renderDialog({ fetchLinkPreviews: true });
+    const toggle = screen.getByRole('switch', { name: /link previews/i });
+    await expect.element(toggle).toBeChecked();
+    await userEvent.click(toggle);
+    expect(setValues.fetchLinkPreviews).toHaveBeenCalledWith(false);
   });
 
   it('marks all as read via the callback', async () => {

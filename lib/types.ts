@@ -78,6 +78,8 @@ export interface FeedItem {
   read: boolean;
   /** Epoch ms this item was first fetched and stored. */
   fetchedAt: number;
+  /** Epoch ms of the last link-preview enrichment attempt (success or "nothing found"). Set once; guards against re-fetching. */
+  previewFetchedAt?: number;
 }
 
 /**

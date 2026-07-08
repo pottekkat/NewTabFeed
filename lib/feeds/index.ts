@@ -20,3 +20,8 @@ export {
   type RefreshAllOptions,
   type RefreshAllResult,
 } from '@/lib/feeds/refresh';
+export { enrichPendingPreviews, type EnrichOptions } from '@/lib/feeds/enrich';
+export {
+  backfillFeedIcons,
+  type IconBackfillOptions,
+} from '@/lib/feeds/icon-backfill';

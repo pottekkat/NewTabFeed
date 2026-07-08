@@ -14,6 +14,8 @@ import {
   unreadCounts,
   countItems,
   pruneFeed,
+  itemsNeedingPreview,
+  applyPreview,
 } from '@/lib/db';
 
 function feed(id: string, addedAt = 1000): Feed {
@@ -95,6 +97,132 @@ describe('upsertItems', () => {
     expect(stored.read).toBe(true); // preserved
     expect(stored.fetchedAt).toBe(100); // original fetchedAt preserved
     expect(stored.title).toBe('Updated'); // content still updated
+  });
+
+  it('preserves enrichment (thumbnail, summary, previewFetchedAt) on re-fetch with empty values', async () => {
+    // Item was enriched: it has a cover, an excerpt, and an attempt stamp.
+    await upsertItems([
+      {
+        ...item('1', 'a', 100),
+        thumbnailUrl: 'https://cdn/x.jpg',
+        summaryHtml: 'An enriched excerpt.',
+        previewFetchedAt: 500,
+      },
+    ]);
+    // The feed re-ships the same item still carrying no thumbnail/summary.
+    await upsertItems([{ ...item('1', 'a', 100) }]);
+    const stored = (await listItems())[0];
+    expect(stored.thumbnailUrl).toBe('https://cdn/x.jpg');
+    expect(stored.summaryHtml).toBe('An enriched excerpt.');
+    expect(stored.previewFetchedAt).toBe(500);
+  });
+
+  it('lets fresh feed data win over enriched data when present', async () => {
+    await upsertItems([
+      {
+        ...item('1', 'a', 100),
+        thumbnailUrl: 'https://cdn/old.jpg',
+        previewFetchedAt: 500,
+      },
+    ]);
+    await upsertItems([
+      { ...item('1', 'a', 100), thumbnailUrl: 'https://cdn/new.jpg' },
+    ]);
+    const stored = (await listItems())[0];
+    expect(stored.thumbnailUrl).toBe('https://cdn/new.jpg'); // feed wins
+    expect(stored.previewFetchedAt).toBe(500); // stamp still sticks
+  });
+});
+
+describe('itemsNeedingPreview', () => {
+  beforeEach(async () => {
+    await upsertFeed(feed('a'));
+  });
+
+  it('returns items lacking a thumbnail or carrying a thin summary, newest-first', async () => {
+    await upsertItems([
+      // needs preview: no thumbnail
+      item('need1', 'a', 40),
+      // complete: has thumbnail + real summary → excluded
+      {
+        ...item('done', 'a', 30),
+        thumbnailUrl: 'https://cdn/d.jpg',
+        summaryHtml: 'A perfectly good long-enough summary to render.',
+      },
+      // has thumbnail but thin summary → still needs preview
+      {
+        ...item('need2', 'a', 20),
+        thumbnailUrl: 'https://cdn/t.jpg',
+        summaryHtml: '<a href="#">Comments</a>',
+      },
+      // already attempted → excluded even though it lacks a thumbnail
+      { ...item('attempted', 'a', 10), previewFetchedAt: 999 },
+    ]);
+
+    const ids = (await itemsNeedingPreview(10)).map((i) => i.id);
+    expect(ids).toEqual(['need1', 'need2']); // newest-first, filtered
+  });
+
+  it('honors the limit', async () => {
+    await upsertItems([
+      item('a1', 'a', 1),
+      item('a2', 'a', 2),
+      item('a3', 'a', 3),
+    ]);
+    expect(await itemsNeedingPreview(2)).toHaveLength(2);
+  });
+});
+
+describe('applyPreview', () => {
+  beforeEach(async () => {
+    await upsertFeed(feed('a'));
+  });
+
+  it('fills only the missing fields and marks the item attempted', async () => {
+    await upsertItems([
+      {
+        ...item('1', 'a', 1),
+        // Already has a good summary; no thumbnail.
+        summaryHtml: 'An existing, sufficiently long summary to keep as-is.',
+      },
+    ]);
+    await applyPreview('1', {
+      thumbnailUrl: 'https://cdn/new.jpg',
+      summaryHtml: 'Should be ignored — existing summary is not thin.',
+      previewFetchedAt: 777,
+    });
+    const stored = (await listItems())[0];
+    expect(stored.thumbnailUrl).toBe('https://cdn/new.jpg'); // filled (was missing)
+    expect(stored.summaryHtml).toBe(
+      'An existing, sufficiently long summary to keep as-is.',
+    ); // untouched
+    expect(stored.previewFetchedAt).toBe(777);
+  });
+
+  it('fills a thin summary but keeps an existing thumbnail', async () => {
+    await upsertItems([
+      {
+        ...item('1', 'a', 1),
+        thumbnailUrl: 'https://cdn/keep.jpg',
+        summaryHtml: '<a href="#">Comments</a>',
+      },
+    ]);
+    await applyPreview('1', {
+      thumbnailUrl: 'https://cdn/ignored.jpg',
+      summaryHtml: 'A newly mined excerpt that is plenty long to render.',
+      previewFetchedAt: 1,
+    });
+    const stored = (await listItems())[0];
+    expect(stored.thumbnailUrl).toBe('https://cdn/keep.jpg'); // kept
+    expect(stored.summaryHtml).toBe(
+      'A newly mined excerpt that is plenty long to render.',
+    ); // filled (was thin)
+  });
+
+  it('is a no-op when the item is gone', async () => {
+    await expect(
+      applyPreview('missing', { previewFetchedAt: 1 }),
+    ).resolves.toBeUndefined();
   });
 });
 

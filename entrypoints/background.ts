@@ -6,7 +6,11 @@ import {
   watchRefreshInterval,
   REFRESH_ALARM,
 } from '@/lib/scheduler';
-import { refreshAllFeeds } from '@/lib/feeds';
+import {
+  refreshAllFeeds,
+  enrichPendingPreviews,
+  backfillFeedIcons,
+} from '@/lib/feeds';
 import { broadcastFeedsUpdated } from '@/lib/message-handler';
 import { refreshIntervalMinutes } from '@/lib/settings';
 import {
@@ -68,6 +72,14 @@ export default defineBackground(() => {
       const intervalMs = (await refreshIntervalMinutes.getValue()) * 60_000;
       const result = await refreshAllFeeds({ intervalMs });
       if (result.changed) {
+        await broadcastFeedsUpdated();
+      }
+      const enriched = await enrichPendingPreviews();
+      if (enriched.changed) {
+        await broadcastFeedsUpdated();
+      }
+      const icons = await backfillFeedIcons();
+      if (icons.changed) {
         await broadcastFeedsUpdated();
       }
     })();

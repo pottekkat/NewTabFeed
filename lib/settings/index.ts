@@ -38,6 +38,15 @@ export const onboardingComplete = storage.defineItem<boolean>(
   { fallback: false },
 );
 
+/**
+ * Whether to fetch linked articles and mine Open Graph / Twitter Card metadata
+ * to fill a missing cover image or thin excerpt. On by default; local-only.
+ */
+export const fetchLinkPreviews = storage.defineItem<boolean>(
+  'local:settings:fetchLinkPreviews',
+  { fallback: true },
+);
+
 /** All settings values in one shot — convenient for the UI's initial render. */
 export interface SettingsSnapshot {
   refreshIntervalMinutes: number;
@@ -45,16 +54,18 @@ export interface SettingsSnapshot {
   theme: Theme;
   markReadOnOpen: boolean;
   onboardingComplete: boolean;
+  fetchLinkPreviews: boolean;
 }
 
 export async function getSettings(): Promise<SettingsSnapshot> {
-  const [interval, density, themeValue, markRead, onboarding] =
+  const [interval, density, themeValue, markRead, onboarding, linkPreviews] =
     await Promise.all([
       refreshIntervalMinutes.getValue(),
       layoutDensity.getValue(),
       theme.getValue(),
       markReadOnOpen.getValue(),
       onboardingComplete.getValue(),
+      fetchLinkPreviews.getValue(),
     ]);
   return {
     refreshIntervalMinutes: interval,
@@ -62,5 +73,6 @@ export async function getSettings(): Promise<SettingsSnapshot> {
     theme: themeValue,
     markReadOnOpen: markRead,
     onboardingComplete: onboarding,
+    fetchLinkPreviews: linkPreviews,
   };
 }
