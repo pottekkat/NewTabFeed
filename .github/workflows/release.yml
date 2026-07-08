@@ -71,7 +71,7 @@ jobs:
       # dashboard rather than pushing it live.
       - name: Upload to Chrome Web Store
         if: ${{ env.CWS_EXTENSION_ID != '' }}
-        uses: mnao305/chrome-extension-upload@v6
+        uses: mnao305/chrome-extension-upload@v6.0.0
         with:
           file-path: ${{ steps.pkg.outputs.zip }}
           extension-id: ${{ env.CWS_EXTENSION_ID }}
