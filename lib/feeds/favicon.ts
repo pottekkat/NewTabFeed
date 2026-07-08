@@ -1,11 +1,11 @@
-// Favicon resolution + local byte caching — runs in the service worker only.
+// Favicon resolution + local byte caching—runs in the service worker only.
 //
 // Rendering a favicon from a remote URL at paint time is fragile: hotlink
 // protection, cross-origin resource policy, sites Chrome has never visited (the
 // MV3 `_favicon` API then returns a generic globe), and plain 404s all leave a
 // blank. The robust, local-first fix is to fetch the icon BYTES here in the
 // worker and store them as a `data:` URL, so the newtab page renders from local
-// bytes that always work — offline included.
+// bytes that always work—offline included.
 //
 // MV3 hazards handled here:
 // - NO DOM APIs in the worker: icon `<link>`s are extracted from the homepage
@@ -14,7 +14,7 @@
 //   the WHOLE resolution shares a single 6s budget (homepage + every icon
 //   candidate + favicon.ico combined). A feed refresh does up to a 20s feed
 //   fetch and THEN this, so bounding favicon work at 6s keeps the worst case at
-//   ~26s — safely under the 30s worker limit. When the budget elapses, all
+//   ~26s—safely under the 30s worker limit. When the budget elapses, all
 //   in-flight and subsequent favicon fetches abort and resolution returns
 //   undefined.
 // - Icon resolution is strictly BEST-EFFORT: any failure (including budget
@@ -25,13 +25,13 @@ import { originOf, resolveUrl } from '@/lib/url';
 
 /**
  * Total wall-clock budget for one `resolveAndCacheIcon` call, across every fetch
- * it makes. This — not the per-request timeout — is what keeps a refresh within
+ * it makes. This—not the per-request timeout—is what keeps a refresh within
  * the 30s worker limit (feed fetch ≤20s + favicon ≤6s ≈ 26s).
  */
 const ICON_TOTAL_BUDGET_MS = 6_000;
 /**
  * Per-request timeout, kept under the total budget so one slow host can't
- * consume it all — two quick failures still fit inside the budget.
+ * consume it all—two quick failures still fit inside the budget.
  */
 const ICON_FETCH_TIMEOUT_MS = 5_000;
 /** Skip icons larger than this to keep IndexedDB small (~150 KB). */
@@ -61,10 +61,10 @@ const EXT_MIME: Record<string, string> = {
  *
  * Sources are tried in priority order, and the first that yields valid image
  * bytes wins:
- *   1. `feedIconUrl` — the feed's self-declared icon.
+ *   1. `feedIconUrl`—the feed's self-declared icon.
  *   2. Icon `<link>`s in the site homepage's `<head>` (apple-touch-icon first,
  *      then plain `icon`/`shortcut icon`).
- *   3. `${origin}/favicon.ico` — the conventional fallback.
+ *   3. `${origin}/favicon.ico`—the conventional fallback.
  *
  * Best-effort: never throws. A network/permission/parse failure just falls
  * through to the next source (or returns undefined). The whole call shares a
@@ -184,8 +184,8 @@ async function findHtmlIcons(
 
 /**
  * Regex-extract icon `<link>` hrefs from an HTML fragment (no DOMParser in the
- * worker). Matches any `<link>` whose `rel` contains "icon" — covering `icon`,
- * `shortcut icon`, and `apple-touch-icon` — tolerating attribute order and
+ * worker). Matches any `<link>` whose `rel` contains "icon"—covering `icon`,
+ * `shortcut icon`, and `apple-touch-icon`—tolerating attribute order and
  * single/double/unquoted values. Apple-touch-icons come first (usually a crisp
  * PNG); other icons follow in document order.
  */

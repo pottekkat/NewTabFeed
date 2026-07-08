@@ -25,7 +25,7 @@ import { isFeedsFound, type RequestMessage } from '@/lib/messages';
 //
 // MV3 rules honored here:
 // - No DOM APIs (feed parsing is pure-JS feedsmith; sanitizing happens in the page).
-// - No durable state in module globals — every handler reads from storage/IndexedDB.
+// - No durable state in module globals—every handler reads from storage/IndexedDB.
 // - Scheduling via chrome.alarms, never setTimeout/setInterval.
 // - Listeners are registered synchronously at the top level so a restarted
 //   worker replays events to them.

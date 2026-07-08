@@ -6,7 +6,7 @@
 //
 // Context note: IndexedDB is available in BOTH the MV3 service worker AND
 // extension pages (newtab/popup), and both open the SAME named database. So the
-// newtab page reads items directly from here — no message-passing round-trip to
+// newtab page reads items directly from here—no message-passing round-trip to
 // the worker just to render. The worker writes on refresh; the page reads and
 // re-queries when it receives a `feeds-updated` broadcast.
 
@@ -45,7 +45,7 @@ let dbPromise: Promise<IDBPDatabase<NtfDB>> | undefined;
  * Open (or reuse) the database connection.
  *
  * The promise is memoized per JS context. In the ephemeral service worker this
- * cache dies with the worker, which is fine — the next event reopens it. No
+ * cache dies with the worker, which is fine—the next event reopens it. No
  * durable state lives in this module beyond the connection handle.
  */
 export function getDB(): Promise<IDBPDatabase<NtfDB>> {
@@ -110,7 +110,7 @@ export async function deleteFeed(feedId: string): Promise<void> {
 /**
  * Insert or update items, deduping by `id`. Crucially, when an item already
  * exists (a re-fetch of the same entry), the stored `read` flag and original
- * `fetchedAt` are PRESERVED — re-fetching never marks a read item unread.
+ * `fetchedAt` are PRESERVED—re-fetching never marks a read item unread.
  * Returns the number of genuinely new items written.
  */
 export async function upsertItems(items: FeedItem[]): Promise<number> {

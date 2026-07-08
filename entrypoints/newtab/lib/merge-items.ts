@@ -43,7 +43,7 @@ export function mergeItems(
 ): FeedItem[] {
   const byId = new Map<string, FeedItem>();
   for (const item of existing) byId.set(item.id, item);
-  // Incoming wins on conflict — it's the fresher copy.
+  // Incoming wins on conflict—it's the fresher copy.
   for (const item of incoming) byId.set(item.id, item);
   return [...byId.values()].sort((a, b) => b.publishedAt - a.publishedAt);
 }

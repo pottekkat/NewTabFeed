@@ -20,7 +20,7 @@ const extensionPath = resolve(here, '../dist/chrome-mv3');
 // Playwright can't drive).
 //
 // Fixtures are test-scoped, so every test gets a brand-new persistent profile —
-// a clean IndexedDB and unset settings (onboarding starts fresh) — and its own
+// a clean IndexedDB and unset settings (onboarding starts fresh)—and its own
 // fixture server on a fresh port.
 export const test = base.extend<{
   context: BrowserContext;

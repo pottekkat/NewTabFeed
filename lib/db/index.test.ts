@@ -188,7 +188,7 @@ describe('applyPreview', () => {
     ]);
     await applyPreview('1', {
       thumbnailUrl: 'https://cdn/new.jpg',
-      summaryHtml: 'Should be ignored — existing summary is not thin.',
+      summaryHtml: 'Should be ignored—existing summary is not thin.',
       previewFetchedAt: 777,
     });
     const stored = (await listItems())[0];

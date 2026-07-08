@@ -34,7 +34,7 @@ describe('ensureRefreshAlarm', () => {
     expect(alarm?.periodInMinutes).toBe(0.5);
   });
 
-  it('is idempotent — no churn when the period already matches', async () => {
+  it('is idempotent—no churn when the period already matches', async () => {
     await ensureRefreshAlarm();
     const createSpy = vi.spyOn(browser.alarms, 'create');
     await ensureRefreshAlarm();

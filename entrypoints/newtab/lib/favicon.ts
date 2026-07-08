@@ -1,6 +1,6 @@
 // Favicon URLs via the MV3 `_favicon/` API (requires the "favicon" permission,
 // declared in wxt.config.ts). This resolves icons Chrome already has cached for
-// visited sites, with no third-party network request — keeping the reader
+// visited sites, with no third-party network request—keeping the reader
 // local-first. Callers render a fallback glyph when the <img> errors.
 
 import { browser } from 'wxt/browser';
@@ -23,7 +23,7 @@ export function faviconUrl(
 
 /**
  * The site's own `/favicon.ico`, derived from its origin. Loaded as an ordinary
- * `<img>` (no host permission needed) — a local-first path that hits only the
+ * `<img>` (no host permission needed)—a local-first path that hits only the
  * site itself, never a third-party favicon service. Returns undefined when
  * there's no valid site URL to key off.
  */

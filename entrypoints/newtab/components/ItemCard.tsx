@@ -20,7 +20,7 @@ interface ItemCardProps {
 }
 
 /**
- * A stable key the placeholder gradient's hue derives from — the linked
+ * A stable key the placeholder gradient's hue derives from—the linked
  * article's hostname. Same host always yields the same color: a direct blog's
  * posts share one tint, while an aggregator's cards (whose links point at many
  * outside domains) get pleasant per-domain variety. Falls back to the feed id
@@ -60,7 +60,7 @@ function ItemCardImpl({
   return (
     <a
       href={item.url}
-      // Same tab is correct — this IS the new tab. Modified/middle clicks open a
+      // Same tab is correct—this IS the new tab. Modified/middle clicks open a
       // background tab via the browser's native anchor handling; we don't
       // preventDefault, we just record the open.
       onClick={() => onOpen(item)}

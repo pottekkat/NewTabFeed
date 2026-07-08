@@ -2,7 +2,7 @@
 //
 // Each tile is a self-contained HTML page (inline CSS, the app icon inlined as a
 // data URI, no network) rendered headless by Playwright's Chromium and shot at
-// its precise pixel size. No extension is loaded — these are pure marketing
+// its precise pixel size. No extension is loaded—these are pure marketing
 // images, so they don't need the e2e harness. Run with `pnpm marketing`.
 
 import { chromium } from '@playwright/test';

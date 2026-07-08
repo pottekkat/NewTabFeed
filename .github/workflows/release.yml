@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     # Chrome Web Store secrets are surfaced as env vars so steps can gate on them
     # (secrets can't be referenced directly in `if:`). Leave them unset and the
-    # store-upload step is simply skipped — the GitHub Release still happens.
+    # store-upload step is simply skipped—the GitHub Release still happens.
     env:
       CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
       CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}

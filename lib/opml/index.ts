@@ -1,6 +1,6 @@
 // OPML import/export via feedsmith's OPML functions.
 //
-// OPML is how users own their data — export to leave, import to arrive. We
+// OPML is how users own their data—export to leave, import to arrive. We
 // flatten nested folders on import (NewTabFeed has no folder concept) and dedupe
 // by canonical feed URL. Export produces a flat OPML 2.0 document.
 
@@ -86,7 +86,7 @@ export function parseOpmlDocument(xml: string): OpmlEntry[] {
           });
         }
       }
-      // Folders can nest arbitrarily deep — recurse regardless.
+      // Folders can nest arbitrarily deep—recurse regardless.
       walk(outline.outlines);
     }
   };

@@ -50,7 +50,7 @@ export default tseslint.config(
     },
     rules: {
       // Playwright fixtures use `async ({}, use) => ...` to opt out of
-      // injected dependencies — the empty pattern is intentional.
+      // injected dependencies—the empty pattern is intentional.
       'no-empty-pattern': 'off',
     },
   },

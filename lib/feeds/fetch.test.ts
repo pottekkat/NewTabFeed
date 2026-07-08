@@ -17,7 +17,7 @@ vi.mock('@/lib/permissions', async (importOriginal) => {
   };
 });
 
-// Minimal duck-typed Response — the real constructor rejects null-body statuses
+// Minimal duck-typed Response—the real constructor rejects null-body statuses
 // like 304, and fetchFeed only touches status/ok/headers.get/text.
 function response(
   body: string,

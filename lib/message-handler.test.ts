@@ -46,7 +46,7 @@ afterEach(() => {
 
 const FEED_URL = 'https://feed.example.com/feed';
 
-describe('dispatch — subscribe', () => {
+describe('dispatch—subscribe', () => {
   it('subscribes and broadcasts feeds-updated', async () => {
     registry.set(FEED_URL, fixture('rss2.xml'));
     const broadcast = vi.spyOn(browser.runtime, 'sendMessage');
@@ -82,7 +82,7 @@ describe('dispatch — subscribe', () => {
   });
 });
 
-describe('dispatch — unsubscribe', () => {
+describe('dispatch—unsubscribe', () => {
   it('removes a feed', async () => {
     registry.set(FEED_URL, fixture('rss2.xml'));
     await dispatch({ type: 'subscribe', url: FEED_URL });
@@ -92,7 +92,7 @@ describe('dispatch — unsubscribe', () => {
   });
 });
 
-describe('dispatch — refresh-now', () => {
+describe('dispatch—refresh-now', () => {
   it('reports whether anything changed', async () => {
     registry.set(FEED_URL, fixture('rss2.xml'));
     await dispatch({ type: 'subscribe', url: FEED_URL });
@@ -102,7 +102,7 @@ describe('dispatch — refresh-now', () => {
   });
 });
 
-describe('dispatch — OPML export/import', () => {
+describe('dispatch—OPML export/import', () => {
   it('exports subscribed feeds as OPML', async () => {
     registry.set(FEED_URL, fixture('rss2.xml'));
     await dispatch({ type: 'subscribe', url: FEED_URL });

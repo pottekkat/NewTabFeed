@@ -6,7 +6,7 @@
 // from the service worker, which needs host access to bypass CORS.
 //
 // IMPORTANT: `browser.permissions.request()` must be called from a user gesture
-// in a UI page (newtab/popup) — it will reject if called from the service
+// in a UI page (newtab/popup)—it will reject if called from the service
 // worker or without a gesture. So `requestHostAccess()` is exported for Phase 2
 // UI to call on the "add feed" click. The worker only ever *checks* access and
 // surfaces a `NoHostPermissionError` when it's missing.

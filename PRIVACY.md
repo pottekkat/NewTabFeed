@@ -9,10 +9,10 @@ your device. This document explains, honestly, what it does and does not do.
 
 All of the following live only in your browser, on your device:
 
-- **Your subscriptions** — the feeds you add, plus any custom titles you set.
-- **Feed items** — the articles fetched from your feeds, cached for offline reading.
-- **Read state** — which items you've opened.
-- **Settings** — theme, layout density, refresh interval, and similar preferences.
+- **Your subscriptions**—the feeds you add, plus any custom titles you set.
+- **Feed items**—the articles fetched from your feeds, cached for offline reading.
+- **Read state**—which items you've opened.
+- **Settings**—theme, layout density, refresh interval, and similar preferences.
 
 Subscriptions and items are stored in IndexedDB; settings are stored in the
 extension's local storage. Nothing is written to a server we control, because
@@ -52,7 +52,7 @@ there are none.
 
 NewTabFeed requests the narrowest permissions it can. Host access to sites
 (`<all_urls>`) is an **optional** permission that is requested only when you
-first add a feed, so the browser shows a single, clear prompt — it is never
+first add a feed, so the browser shows a single, clear prompt—it is never
 requested at install. See [CHROMEWEBSTORE.md](./CHROMEWEBSTORE.md) for the full
 per-permission justification.
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { excerpt } from './excerpt';
 
-// Runs in the browser project — DOMPurify needs a real DOM.
+// Runs in the browser project—DOMPurify needs a real DOM.
 describe('excerpt', () => {
   it('returns empty string for missing input', () => {
     expect(excerpt(undefined)).toBe('');

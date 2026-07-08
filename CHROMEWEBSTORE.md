@@ -8,7 +8,7 @@ with each release.
 **Name:** NewTabFeed
 
 **Summary (132 chars max):**
-A local-first RSS reader in your new tab. Your feeds, newest-first — no accounts, no cloud, no ads.
+A local-first RSS reader in your new tab. Your feeds, newest-first—no accounts, no cloud, no ads.
 
 **Category:** Productivity
 
@@ -17,7 +17,7 @@ A local-first RSS reader in your new tab. Your feeds, newest-first — no accoun
 > Replace your new tab with a clean reader for the sites you actually follow.
 >
 > NewTabFeed shows your RSS, Atom, and JSON feeds newest-first every time you
-> open a tab — no algorithm, no ranking, no promoted posts. You pick every
+> open a tab—no algorithm, no ranking, no promoted posts. You pick every
 > source, and everything stays on your device.
 >
 > Features:
@@ -34,7 +34,7 @@ A local-first RSS reader in your new tab. Your feeds, newest-first — no accoun
 > Local-first and private: no accounts, no sync servers, no analytics, no ads.
 > Your subscriptions and reading history never leave your browser.
 
-_Write the description function-first — what the user gets — with no
+_Write the description function-first—what the user gets—with no
 implementation or framework details._
 
 ## Permission justifications
@@ -42,15 +42,15 @@ implementation or framework details._
 Every permission requested by the extension, and why it is needed. These must
 match `wxt.config.ts` and the built `manifest.json`.
 
-| Permission                              | Why it's needed                                                                                                                                                            |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `storage`                               | Persist your settings (theme, density, refresh interval, onboarding state) locally.                                                                                        |
-| `unlimitedStorage`                      | Cache feed items in IndexedDB for offline reading without hitting the default storage quota.                                                                               |
-| `alarms`                                | Schedule periodic background refresh of your feeds at your chosen interval.                                                                                                |
-| `favicon`                               | Show each source's site icon via Chrome's local `_favicon/` API (no external icon service).                                                                                |
-| `tabs`                                  | Read the active tab's URL so the popup can offer to subscribe to that site's feed.                                                                                         |
-| `scripting`                             | Register the feed-discovery content script at runtime, only after host access is granted.                                                                                  |
-| `<all_urls>` (optional host permission) | Fetch the feeds you subscribe to directly from their own servers, and probe a site for feeds when you ask. Requested once, the first time you add a feed — not at install. |
+| Permission                              | Why it's needed                                                                                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `storage`                               | Persist your settings (theme, density, refresh interval, onboarding state) locally.                                                                                      |
+| `unlimitedStorage`                      | Cache feed items in IndexedDB for offline reading without hitting the default storage quota.                                                                             |
+| `alarms`                                | Schedule periodic background refresh of your feeds at your chosen interval.                                                                                              |
+| `favicon`                               | Show each source's site icon via Chrome's local `_favicon/` API (no external icon service).                                                                              |
+| `tabs`                                  | Read the active tab's URL so the popup can offer to subscribe to that site's feed.                                                                                       |
+| `scripting`                             | Register the feed-discovery content script at runtime, only after host access is granted.                                                                                |
+| `<all_urls>` (optional host permission) | Fetch the feeds you subscribe to directly from their own servers, and probe a site for feeds when you ask. Requested once, the first time you add a feed—not at install. |
 
 ## Privacy disclosures (Web Store form)
 
@@ -78,7 +78,7 @@ data). Replace with real-content captures before submission._
 
 ## Version history
 
-- **0.1.0** — Initial release. On-device RSS/Atom/JSON reading in the new tab,
+- **0.1.0**—Initial release. On-device RSS/Atom/JSON reading in the new tab,
   onboarding with starter feeds, feed discovery + well-known-path probing, OPML
   import/export, per-feed and unread-only filtering, themes, density, and
   scheduled background refresh.

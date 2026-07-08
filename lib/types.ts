@@ -118,7 +118,7 @@ export interface ParsedFeed {
  * Whether a feed's error should be surfaced in the UI.
  *
  * Error state is *recorded* on the very first failure (it drives backoff), but a
- * single failure very often self-heals on the next refresh — which clears the
+ * single failure very often self-heals on the next refresh—which clears the
  * error. Showing a warning for a one-off network blip is too alarming, so the UI
  * only surfaces the error once it has failed at least twice in a row.
  */

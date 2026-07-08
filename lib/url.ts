@@ -1,4 +1,4 @@
-// URL helpers — pure, framework-free, no extension APIs.
+// URL helpers—pure, framework-free, no extension APIs.
 //
 // Feed URLs come from users (typed into an "add feed" box) and from feeds
 // themselves (item links, often relative). We canonicalize the former so the
@@ -62,7 +62,7 @@ export function resolveUrl(
   try {
     return new URL(value).toString();
   } catch {
-    // Relative — fall through and try to resolve against the bases.
+    // Relative—fall through and try to resolve against the bases.
   }
   for (const base of bases) {
     if (!base) {

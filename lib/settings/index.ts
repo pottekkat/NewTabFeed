@@ -1,5 +1,5 @@
 // User settings, via @wxt-dev/storage's `defineItem` (type-safe, versioned,
-// backed by chrome.storage.local). NOT for the item archive — that's IndexedDB.
+// backed by chrome.storage.local). NOT for the item archive—that's IndexedDB.
 //
 // Each item declares a `fallback` so `getValue()` always returns a concrete
 // value (never null) and reads work before the user has ever changed anything.
@@ -47,7 +47,7 @@ export const fetchLinkPreviews = storage.defineItem<boolean>(
   { fallback: true },
 );
 
-/** All settings values in one shot — convenient for the UI's initial render. */
+/** All settings values in one shot—convenient for the UI's initial render. */
 export interface SettingsSnapshot {
   refreshIntervalMinutes: number;
   layoutDensity: LayoutDensity;

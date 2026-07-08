@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 import { openNewTab, onboardWithFeed } from './helpers';
 
-/** Count cards sharing the topmost row — i.e. the grid's column count. */
+/** Count cards sharing the topmost row—i.e. the grid's column count. */
 function firstRowColumns(
   page: import('@playwright/test').Page,
 ): Promise<number> {

@@ -26,7 +26,7 @@ test('an advertised feed lights the badge and subscribes from the popup', async 
   const popup = await openPopup(context, extensionId, tabId);
   await expect(popup.getByText('E2E Fixture Feed')).toBeVisible();
   const subscribeBtn = popup.getByRole('button', { name: 'Subscribe' });
-  // Interactive controls must show the pointer cursor — Tailwind v4's preflight
+  // Interactive controls must show the pointer cursor—Tailwind v4's preflight
   // resets <button> to `cursor: default`, so a base rule restores it.
   await expect(subscribeBtn).toHaveCSS('cursor', 'pointer');
   await subscribeBtn.click();
@@ -67,7 +67,7 @@ test("on NewTabFeed's own page the popup explains itself instead of offering a d
   extensionId,
   background,
 }) => {
-  // The reader's own new-tab page isn't a feed source — probing it is
+  // The reader's own new-tab page isn't a feed source—probing it is
   // meaningless, so the popup should say so rather than show "No feed
   // advertised" + a Check-for-RSS-feeds button that could only ever fail.
   await openNewTab(context, extensionId);

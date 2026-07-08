@@ -6,7 +6,7 @@ interface FaviconProps {
   siteUrl: string | undefined;
   /** The feed's own declared icon URL, tried first when present. */
   iconUrl?: string;
-  /** Fallback glyph — first letter of the source name. */
+  /** Fallback glyph—first letter of the source name. */
   fallback: string;
   size?: number;
   className?: string;

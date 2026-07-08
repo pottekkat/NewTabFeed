@@ -99,7 +99,7 @@ describe('resolveAndCacheIcon', () => {
     });
 
     expect(result).toBe(`data:image/png;base64,${b64(png)}`);
-    // The homepage HTML was never fetched — only the declared icon.
+    // The homepage HTML was never fetched—only the declared icon.
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).not.toHaveBeenCalledWith(
       'https://example.com',
@@ -164,7 +164,7 @@ describe('resolveAndCacheIcon', () => {
       // Every source hangs until its request signal aborts (per-request timeout
       // or the shared total budget). With fake timers this never resolves on its
       // own, so if resolution completes it can only be because the budget bounded
-      // it — proving a slow host can't run past the ~6s cap into the SW limit.
+      // it—proving a slow host can't run past the ~6s cap into the SW limit.
       fetchMock.mockImplementation(
         (_url: string, init?: { signal?: AbortSignal }) =>
           new Promise((_resolve, reject) => {

@@ -1,7 +1,7 @@
 // The new tab's data engine.
 //
 // Reads items and feeds straight from IndexedDB (the same DB the worker writes),
-// so the first paint is instant from local data — no message round-trip. It
+// so the first paint is instant from local data—no message round-trip. It
 // paginates the timeline, tracks per-feed unread counts, applies the unread-only
 // and per-feed filters, and reacts to the worker's `feeds-updated` broadcast: it
 // re-queries the top page and, if the user has scrolled away, surfaces the new
@@ -27,7 +27,7 @@ const NEAR_TOP_PX = 200;
 export interface FeedData {
   feeds: Feed[];
   unread: Map<string, number>;
-  /** Sum of all unread counts — for the "All feeds" filter entry. */
+  /** Sum of all unread counts—for the "All feeds" filter entry. */
   totalUnread: number;
   items: FeedItem[];
   loading: boolean;

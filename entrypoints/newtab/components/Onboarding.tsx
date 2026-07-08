@@ -113,7 +113,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           Your feeds. Your tab. Nothing else.
         </p>
         <p className="text-muted-foreground/80 mt-2 text-sm">
-          Everything stays on your device — no accounts, no cloud, no tracking.
+          Everything stays on your device—no accounts, no cloud, no tracking.
         </p>
 
         {phase === 'denied' && (

@@ -3,8 +3,8 @@
 // The extension's service worker fetches feeds over the network (host access is
 // granted at install by the WXT_E2E build), so the suite needs a real origin to
 // fetch from. This server serves a valid RSS 2.0 feed, an Atom feed, HTML pages
-// with and without an advertised feed, and — because probing looks at
-// conventional locations — the same feed at `/rss` and `/rss.xml`.
+// with and without an advertised feed, and—because probing looks at
+// conventional locations—the same feed at `/rss` and `/rss.xml`.
 //
 // Feed item links point back at this origin so clicking a card navigates to a
 // page that actually loads (a 200) instead of a real external site.
@@ -29,7 +29,7 @@ const BASE_TIME = Date.UTC(2024, 0, 1, 12, 0, 0);
 
 /**
  * A valid 1×1 PNG served at `/cover.png`. The cover-image e2e needs the card's
- * `<img>` to actually load — a failed load trips the card's onError and falls
+ * `<img>` to actually load—a failed load trips the card's onError and falls
  * back to the placeholder, which would defeat the "real cover" assertions.
  */
 const COVER_PNG = Buffer.from(
@@ -197,7 +197,7 @@ export function makePreviewRss(base: string): string {
 // titles and short summaries, and recent timestamps. The plain `/rss.xml`
 // fixture (ten identical items, no covers) is built for assertions, not looks,
 // so capture uses its own richer feeds served under `/capture/*`. All of it is
-// fixture data on this local origin — no real sites are ever fetched.
+// fixture data on this local origin—no real sites are ever fetched.
 
 interface CaptureItem {
   title: string;

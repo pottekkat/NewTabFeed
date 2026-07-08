@@ -1,12 +1,12 @@
 // Small, dependency-free, deterministic string hash.
 //
-// Used to derive stable item ids. This is NOT cryptographic — it only needs to
+// Used to derive stable item ids. This is NOT cryptographic—it only needs to
 // be stable across runs and well-distributed enough to avoid collisions within
 // a single user's feed archive. It is synchronous (crypto.subtle is async and
 // overkill here) and runs identically in the service worker and page contexts.
 
 /**
- * cyrb53 — a fast 53-bit hash by bryc (public domain).
+ * cyrb53—a fast 53-bit hash by bryc (public domain).
  * Returns a zero-padded hex string.
  */
 export function hashString(str: string, seed = 0): string {

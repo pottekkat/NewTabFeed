@@ -1,12 +1,12 @@
-// Link-preview extraction — runs in the service worker.
+// Link-preview extraction—runs in the service worker.
 //
 // When a feed item ships no thumbnail and/or no usable description, we fetch the
 // linked article's HTML and mine its Open Graph / Twitter Card metadata to fill
 // the cover image and/or excerpt. This is GENERIC: no per-hostname/site-specific
-// logic — just the standards every publisher already emits in <head>.
+// logic—just the standards every publisher already emits in <head>.
 //
 // SECURITY: the fetched HTML is UNTRUSTED. We only READ attribute values out of
-// it via regex — we never render or execute this markup (rendering and
+// it via regex—we never render or execute this markup (rendering and
 // sanitization happen later, in the newtab page, via DOMPurify). Mirroring
 // content-image.ts and favicon resolution, this stays regex-only: NO
 // DOMParser/DOM APIs (forbidden in the SW).
@@ -25,7 +25,7 @@ export interface LinkPreview {
 /** Default per-fetch timeout. og tags live in <head>, so this is generous. */
 const DEFAULT_TIMEOUT_MS = 6000;
 
-/** Cap the downloaded body at 256 KiB — the tags we want are in <head>. */
+/** Cap the downloaded body at 256 KiB—the tags we want are in <head>. */
 const RANGE_HEADER = 'bytes=0-262143';
 
 /** Meta keys we accept for the cover image, in priority order. */
@@ -119,9 +119,9 @@ export function summaryIsThin(html: string | undefined): boolean {
 /**
  * Fetch a linked article and extract its preview metadata. Cookie-less and
  * body-capped (Range), with a hard per-request timeout (default 6s). Requires
- * host access — `NoHostPermissionError` propagates so the orchestrator can stop
+ * host access—`NoHostPermissionError` propagates so the orchestrator can stop
  * the whole pass. Every OTHER failure (network, timeout, non-2xx) resolves to
- * `{}` — this function never throws for them.
+ * `{}`—this function never throws for them.
  */
 export async function fetchLinkPreview(
   url: string,
@@ -142,7 +142,7 @@ export async function fetchLinkPreview(
       headers: {
         Accept: 'text/html,application/xhtml+xml',
         // Cap the body: og tags live in <head>. A server that ignores Range and
-        // returns a full 200 is fine — we just read whatever we get.
+        // returns a full 200 is fine—we just read whatever we get.
         Range: RANGE_HEADER,
       },
       signal: controller.signal,
@@ -157,7 +157,7 @@ export async function fetchLinkPreview(
     // Resolve relative og:image against the FINAL URL, so redirects resolve right.
     return extractPreview(body, response.url || url);
   } catch {
-    // Network error, timeout/abort, decode failure — all best-effort no-ops.
+    // Network error, timeout/abort, decode failure—all best-effort no-ops.
     return {};
   } finally {
     clearTimeout(timeout);

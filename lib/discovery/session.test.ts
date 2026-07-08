@@ -16,7 +16,7 @@ import {
 } from '@/lib/discovery/session';
 import type { DiscoveredFeed } from '@/lib/discovery/types';
 
-// fakeBrowser implements storage.session but throws on action.* — stub the badge
+// fakeBrowser implements storage.session but throws on action.*—stub the badge
 // calls so we can assert on them. (The overloaded action typings don't accept a
 // plain async mock, so cast the spies to a bare Mock.)
 let setBadgeText: Mock;

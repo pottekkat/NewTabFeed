@@ -22,10 +22,10 @@ type Phase = 'loading' | 'no-access' | 'ready';
 
 /**
  * What kind of page the active tab is:
- * - `web`   — a regular http(s) site we can look for feeds on.
- * - `own`   — NewTabFeed's own page (the new tab / reader). Probing it is
- *   meaningless — it's the reader, not a source — so we say so instead.
- * - `other` — a browser-internal page (chrome://, about:, other extensions,
+ * - `web`  —a regular http(s) site we can look for feeds on.
+ * - `own`  —NewTabFeed's own page (the new tab / reader). Probing it is
+ *   meaningless—it's the reader, not a source—so we say so instead.
+ * - `other`—a browser-internal page (chrome://, about:, other extensions,
  *   the web store…) where feed detection can't run.
  */
 type PageKind = 'web' | 'own' | 'other';
@@ -80,7 +80,7 @@ export default function App() {
 
     await loadSubscribed();
 
-    // Feed detection only means anything on a real web page — not the reader's
+    // Feed detection only means anything on a real web page—not the reader's
     // own page or a browser-internal one.
     if (kind === 'web' && active?.id !== undefined) {
       const res = await sendRequest({
@@ -235,7 +235,7 @@ function ReadyView({
     );
   }
 
-  // No feeds — either the page advertised none, or a probe came back empty.
+  // No feeds—either the page advertised none, or a probe came back empty.
   return (
     <div className="flex flex-col items-start gap-3 py-1">
       <p className="text-muted-foreground text-sm">

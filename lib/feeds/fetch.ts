@@ -1,4 +1,4 @@
-// Network fetch for feed documents — runs in the service worker only.
+// Network fetch for feed documents—runs in the service worker only.
 //
 // MV3 hazards handled here:
 // - A response that takes >30s kills the worker, so every request has an
@@ -8,7 +8,7 @@
 // - Conditional GET (ETag / Last-Modified) avoids re-downloading unchanged
 //   feeds; a 304 short-circuits parsing entirely.
 //
-// A custom User-Agent is intentionally NOT set — extensions can't override it,
+// A custom User-Agent is intentionally NOT set—extensions can't override it,
 // and attempting to is a no-op.
 
 import { assertHostAccess } from '@/lib/permissions';

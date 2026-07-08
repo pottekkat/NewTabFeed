@@ -1,6 +1,6 @@
 // Minimal ambient types for the `chrome` extension globals referenced inside
 // `background.evaluate(...)` callbacks. Those run in the service worker, where
-// `chrome` is a global — but the app uses `wxt/browser`, so there's no
+// `chrome` is a global—but the app uses `wxt/browser`, so there's no
 // project-wide `@types/chrome`. This declares only what the e2e helpers touch.
 declare const chrome: {
   tabs: {

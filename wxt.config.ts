@@ -15,10 +15,10 @@ export default defineConfig({
   manifest: {
     name: 'NewTabFeed',
     description:
-      'A local-first RSS reader in your new tab. Your feeds, on your device — no accounts, no cloud, no ads.',
+      'A local-first RSS reader in your new tab. Your feeds, on your device—no accounts, no cloud, no ads.',
     // `scripting` is needed to register the feed-discovery content script at
     // runtime (see lib/discovery/registration.ts). `<all_urls>` stays OPTIONAL
-    // (below), granted once at onboarding — never required at install.
+    // (below), granted once at onboarding—never required at install.
     permissions: [
       'storage',
       'alarms',
@@ -41,7 +41,7 @@ export default defineConfig({
 
       // E2E-only escape hatch. Playwright cannot click Chrome's native
       // optional-permission dialog, so the test build grants `<all_urls>` at
-      // install time instead — letting the service worker fetch fixture feeds
+      // install time instead—letting the service worker fetch fixture feeds
       // and register the discovery content script without a runtime prompt.
       // Guarded by WXT_E2E so PRODUCTION builds keep host access optional and
       // runtime-requested (no host_permissions, no install-time host warning).

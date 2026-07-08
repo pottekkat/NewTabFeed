@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 interface CoverPlaceholderProps {
   /**
-   * Stable per-source key the gradient hue is derived from — same key always
+   * Stable per-source key the gradient hue is derived from—same key always
    * yields the same colors. Callers pass the article's hostname.
    */
   seed: string;
@@ -35,7 +35,7 @@ function hashString(input: string): number {
  * source key, laid over the neutral `bg-muted` token. The hues are applied with
  * low alpha rather than as opaque fills, so the same tint reads correctly on
  * both the light and dark card backgrounds. A low-contrast source monogram sits
- * on top. Fully local — no network, no per-render randomness.
+ * on top. Fully local—no network, no per-render randomness.
  */
 export function CoverPlaceholder({
   seed,

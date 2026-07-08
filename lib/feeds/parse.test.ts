@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parseFeed, parseDate } from '@/lib/feeds/parse';
 import { fixture } from '@/tests/helpers';
 
-describe('parseFeed — RSS 2.0', () => {
+describe('parseFeed—RSS 2.0', () => {
   const parsed = parseFeed(fixture('rss2.xml'));
 
   it('extracts feed metadata and decodes HTML entities in the title', () => {
@@ -51,7 +51,7 @@ describe('parseFeed — RSS 2.0', () => {
   });
 });
 
-describe('parseFeed — Atom 1.0', () => {
+describe('parseFeed—Atom 1.0', () => {
   const parsed = parseFeed(fixture('atom.xml'));
 
   it('resolves the alternate link as the site URL', () => {
@@ -90,7 +90,7 @@ describe('parseFeed — Atom 1.0', () => {
   });
 });
 
-describe('parseFeed — RDF / RSS 1.0', () => {
+describe('parseFeed—RDF / RSS 1.0', () => {
   const parsed = parseFeed(fixture('rdf.xml'));
 
   it('extracts dc:date and dc:creator', () => {
@@ -105,7 +105,7 @@ describe('parseFeed — RDF / RSS 1.0', () => {
   });
 });
 
-describe('parseFeed — JSON Feed 1.1', () => {
+describe('parseFeed—JSON Feed 1.1', () => {
   const parsed = parseFeed(fixture('jsonfeed.json'));
 
   it('reads home_page_url as the site URL', () => {
@@ -133,7 +133,7 @@ describe('parseFeed — JSON Feed 1.1', () => {
   });
 });
 
-describe('parseFeed — identity and edge cases', () => {
+describe('parseFeed—identity and edge cases', () => {
   it('guid identity is stable when guid differs from link', () => {
     // First rss2 item: guid (tag:) is not the link, so re-runs must keep the guid.
     const a = parseFeed(fixture('rss2.xml')).items[0].guid;
@@ -167,7 +167,7 @@ describe('parseFeed — identity and edge cases', () => {
   });
 });
 
-describe('parseFeed — inline content-image fallback', () => {
+describe('parseFeed—inline content-image fallback', () => {
   it('RSS: uses the first content <img> when no structured thumbnail exists', () => {
     const xml = `<?xml version="1.0"?>
       <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">

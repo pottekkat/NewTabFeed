@@ -5,7 +5,7 @@
 // access at install and trigger the broad-host warning we avoid (see the
 // permission model in TODO.md). Instead the script is registered at runtime via
 // the scripting API, but only once the user has granted `<all_urls>` (which
-// onboarding does). Result: no content script — and no host warning — until the
+// onboarding does). Result: no content script—and no host warning—until the
 // user opts in; automatic discovery on every page thereafter.
 
 import { browser } from 'wxt/browser';
@@ -51,7 +51,7 @@ export async function registerDiscoveryScript(): Promise<void> {
     await browser.scripting.registerContentScripts([REGISTERED_SCRIPT]);
   } catch (err) {
     // A concurrent register (e.g. onInstalled + permissions.onAdded racing) can
-    // report a duplicate id — that's the desired end state, so swallow it.
+    // report a duplicate id—that's the desired end state, so swallow it.
     if (!isDuplicateError(err)) {
       throw err;
     }

@@ -4,7 +4,7 @@ import { playwright } from '@vitest/browser-playwright';
 import { fileURLToPath } from 'node:url';
 
 // Repo root, for the `@` path alias in the browser project (which doesn't run
-// the WXT plugin — see below).
+// the WXT plugin—see below).
 const repoRoot = fileURLToPath(new URL('.', import.meta.url)).replace(
   /\/$/,
   '',
@@ -12,7 +12,7 @@ const repoRoot = fileURLToPath(new URL('.', import.meta.url)).replace(
 
 // Resolve WXT's `#imports` virtual module to an inert stub in the browser
 // project. Component tests mock the modules that actually use extension storage,
-// so `#imports` is never executed there — but Vite still pre-transforms files
+// so `#imports` is never executed there—but Vite still pre-transforms files
 // that reference it (reached via type-only imports), which would otherwise log a
 // resolve error. The stub just needs to resolve; its contents never run.
 const STUB_ID = '\0wxt-imports-stub';
@@ -35,12 +35,12 @@ function stubWxtImports() {
 
 // Two projects:
 //
-// - `node`  — the fast, headless default (`pnpm test`, CI). Pure logic and
+// - `node` —the fast, headless default (`pnpm test`, CI). Pure logic and
 //   worker-side domain tests, with the WXT test plugin (fakeBrowser, `#imports`,
 //   aliases). `node` env avoids the WxtVitest + jsdom friction (wxt#1575).
 //   Browser-only specs (`*.browser.test.*`) are excluded here.
 //
-// - `browser` — React component tests + the DOMPurify-backed excerpt util, in
+// - `browser`—React component tests + the DOMPurify-backed excerpt util, in
 //   real Chromium via Playwright (`pnpm test:components`). WxtVitest's setup
 //   module can't load in browser mode, so this project omits it and instead
 //   provides the `@` alias directly; component tests mock the few modules that

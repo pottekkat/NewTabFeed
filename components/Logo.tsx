@@ -2,7 +2,7 @@
  * The NewTabFeed brand mark: an RSS glyph on a rounded orange tile.
  *
  * Two white RSS "wave" arcs and a white broadcast dot on an orange (#F97316)
- * rounded square — the clean, canonical RSS look. This is the single source of
+ * rounded square—the clean, canonical RSS look. This is the single source of
  * truth for the logo across every surface (newtab header, onboarding, popup);
  * `assets/icon.svg` mirrors it for the generated PNG extension icons.
  */

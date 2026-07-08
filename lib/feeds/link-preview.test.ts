@@ -143,7 +143,7 @@ describe('summaryIsThin', () => {
   });
 });
 
-// Minimal duck-typed Response — only status/ok/url/text are touched.
+// Minimal duck-typed Response—only status/ok/url/text are touched.
 function response(body: string, init: { status?: number; url?: string } = {}) {
   const status = init.status ?? 200;
   return {

@@ -1,6 +1,6 @@
 // Compact relative-time formatting ("just now", "5m", "3h", "2d", "4w").
 //
-// Deliberately tiny and dependency-free — a full date library is overkill for a
+// Deliberately tiny and dependency-free—a full date library is overkill for a
 // handful of coarse buckets, and the new tab is rendered dozens of times a day
 // so we keep the render path cheap. Future timestamps (clock skew between the
 // user's machine and a feed) collapse to "just now" rather than showing "-3m".

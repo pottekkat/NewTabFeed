@@ -1,4 +1,4 @@
-// Favicon backfill pass — runs in the service worker.
+// Favicon backfill pass—runs in the service worker.
 //
 // Icon resolution normally happens coupled to feed fetching (subscribe, and the
 // `updated` branch of refreshFeed). That leaves gaps: a feed added before icon
@@ -19,7 +19,7 @@ import { assertHostAccess, NoHostPermissionError } from '@/lib/permissions';
 import { listFeeds, upsertFeed } from '@/lib/db';
 import { resolveAndCacheIcon } from '@/lib/feeds/favicon';
 
-/** Max feeds re-resolved per pass — keeps the batch well under the SW budget. */
+/** Max feeds re-resolved per pass—keeps the batch well under the SW budget. */
 const DEFAULT_MAX_FEEDS = 10;
 /** Concurrent icon resolutions. */
 const DEFAULT_CONCURRENCY = 4;
@@ -35,7 +35,7 @@ export interface IconBackfillOptions {
  * Re-resolve icons for a bounded batch of feeds that still lack a cached `data:`
  * icon. No-ops (returns `changed:false`) when host access is missing or no feed
  * needs one. Returns `changed:true` only when at least one feed actually gained
- * a cached icon — so the caller can decide whether to re-broadcast. A single
+ * a cached icon—so the caller can decide whether to re-broadcast. A single
  * feed's failure never aborts the pass.
  *
  * The bounds (10 feeds at concurrency 4 ≈ 3 waves, each resolution self-bounded
@@ -51,7 +51,7 @@ export async function backfillFeedIcons(
     await assertHostAccess();
   } catch (err) {
     if (err instanceof NoHostPermissionError) {
-      // Backfill is best-effort — silently stand down when we can't fetch.
+      // Backfill is best-effort—silently stand down when we can't fetch.
       return { changed: false };
     }
     throw err;

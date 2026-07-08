@@ -16,7 +16,7 @@ describe('CoverPlaceholder', () => {
     expect(el?.textContent).toBe('H');
   });
 
-  it('is deterministic — the same seed yields the same gradient', async () => {
+  it('is deterministic—the same seed yields the same gradient', async () => {
     const first = await render(
       <CoverPlaceholder seed="lobste.rs" label="Lobsters" />,
     );

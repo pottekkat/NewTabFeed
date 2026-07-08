@@ -1,14 +1,14 @@
 // Per-tab discovery state + the action badge.
 //
 // The service worker is ephemeral, so what the content script found for a tab
-// can't live in a module variable — it goes in `storage.session` keyed by tab
+// can't live in a module variable—it goes in `storage.session` keyed by tab
 // id (cleared when the browser closes, which is exactly the lifetime we want).
 // The badge is a per-tab overlay ("light up" when a site has feeds).
 
 import { browser } from 'wxt/browser';
 import type { DiscoveredFeed } from '@/lib/discovery/types';
 
-/** Tailwind orange-500 — the extension's accent, used for the "feeds here" badge. */
+/** Tailwind orange-500—the extension's accent, used for the "feeds here" badge. */
 const BADGE_COLOR = '#f97316';
 
 interface TabDiscovery {
@@ -62,7 +62,7 @@ export async function clearDiscovered(tabId: number): Promise<void> {
 
 /**
  * Set (or clear, when count is 0) the badge for a single tab. Wrapped in
- * try/catch because the badge is cosmetic — a race with tab teardown must never
+ * try/catch because the badge is cosmetic—a race with tab teardown must never
  * reject a discovery write.
  */
 async function setBadge(tabId: number, count: number): Promise<void> {
@@ -77,6 +77,6 @@ async function setBadge(tabId: number, count: number): Promise<void> {
       await browser.action.setBadgeText({ text: '', tabId });
     }
   } catch {
-    // Tab gone or action unavailable — nothing to update.
+    // Tab gone or action unavailable—nothing to update.
   }
 }

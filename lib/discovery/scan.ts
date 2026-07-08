@@ -1,8 +1,8 @@
-// Link-tag feed autodiscovery — pure and DOM-library-free.
+// Link-tag feed autodiscovery—pure and DOM-library-free.
 //
 // The content script hands us the live `document`; tests hand us a minimal
 // stand-in. We only touch `querySelectorAll` and, on each result,
-// `getAttribute`, so both work without jsdom. NOTHING here fetches — scanning is
+// `getAttribute`, so both work without jsdom. NOTHING here fetches—scanning is
 // read-only DOM inspection; the service worker does all network I/O.
 
 import { resolveUrl, canonicalizeUrl } from '@/lib/url';

@@ -1,4 +1,4 @@
-// Link-preview enrichment pass — runs in the service worker.
+// Link-preview enrichment pass—runs in the service worker.
 //
 // A SEPARATE, budgeted pass invoked AFTER refresh/subscribe (never inside a
 // per-feed refresh, which already nears the 30s SW-kill window). It picks a
@@ -16,7 +16,7 @@ import {
   type LinkPreview,
 } from '@/lib/feeds/link-preview';
 
-/** Max items enriched per pass — keeps the batch well under the SW budget. */
+/** Max items enriched per pass—keeps the batch well under the SW budget. */
 const DEFAULT_MAX_ITEMS = 16;
 /** Concurrent article fetches. */
 const DEFAULT_CONCURRENCY = 4;
@@ -36,7 +36,7 @@ export interface EnrichOptions {
  * Enrich a bounded batch of items that need a cover and/or a real excerpt.
  * No-ops (returns `changed:false`) when the feature is off or host access is
  * missing. Returns `changed:true` only when at least one item actually GAINED a
- * thumbnail or summary — so the caller can decide whether to re-broadcast. A
+ * thumbnail or summary—so the caller can decide whether to re-broadcast. A
  * single fetch's failure never aborts the pass.
  */
 export async function enrichPendingPreviews(
@@ -56,7 +56,7 @@ export async function enrichPendingPreviews(
     await assertHostAccess();
   } catch (err) {
     if (err instanceof NoHostPermissionError) {
-      // Enrichment is best-effort — silently stand down when we can't fetch.
+      // Enrichment is best-effort—silently stand down when we can't fetch.
       return { changed: false };
     }
     throw err;

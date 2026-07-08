@@ -6,7 +6,7 @@ import { openNewTab, onboardWithFeed } from './helpers';
 // fixture server, feedsmith parses + normalizes it (resolving a thumbnailUrl from
 // media:thumbnail, an image enclosure, or the first inline content <img>), items
 // land in IndexedDB, and the newtab page renders each card. Every card ends up in
-// one of four states — real cover, or generated placeholder — with its excerpt
+// one of four states—real cover, or generated placeholder—with its excerpt
 // either shown or structurally suppressed (link-only / metadata-only bodies).
 
 test('an inline content image becomes the card cover', async ({

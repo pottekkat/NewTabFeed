@@ -4,7 +4,7 @@
 // Writes (subscribe/unsubscribe/import/export) and refresh all go through the
 // worker; the page reads IndexedDB directly for rendering. Feed fetching needs
 // `<all_urls>` host access, which is an OPTIONAL permission requested at runtime
-// from a user gesture — never at install. `requestHostAccess()` MUST be called
+// from a user gesture—never at install. `requestHostAccess()` MUST be called
 // synchronously within a click handler, so callers invoke `ensureHostAccess()`
 // as the first await of the handler before sending a subscribe/import message.
 

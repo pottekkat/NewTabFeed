@@ -66,7 +66,7 @@ describe('ItemCard', () => {
       />,
     );
 
-    // Tags stripped, text kept — never the raw markup.
+    // Tags stripped, text kept—never the raw markup.
     await expect
       .element(screen.getByText('Some excerpt body text.'))
       .toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('ItemCard', () => {
       'img[src="https://example.com/cover.jpg"]',
     );
     expect(cover).not.toBeNull();
-    // A usable real image must win — the placeholder must not also render.
+    // A usable real image must win—the placeholder must not also render.
     expect(
       screen.container.querySelector('[data-slot="cover-placeholder"]'),
     ).toBeNull();

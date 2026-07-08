@@ -1,4 +1,4 @@
-// Well-known feed path probing — service-worker only (it fetches).
+// Well-known feed path probing—service-worker only (it fetches).
 //
 // When a page advertises no feed via <link> tags, the popup can ask us to try a
 // short list of conventional feed locations for the site's origin. Every hit is

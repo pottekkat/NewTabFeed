@@ -1,9 +1,9 @@
-// Chrome Web Store screenshot capture. This is not a normal test — it drives the
+// Chrome Web Store screenshot capture. This is not a normal test—it drives the
 // real built extension through the e2e harness and saves 1280×800 PNGs into
 // `docs/store/`. It stays out of CI: every test skips unless CAPTURE=1 is set.
 //
 // Run it with `pnpm screenshots` (builds the e2e extension first, then captures).
-// The images use the local fixture feeds under `/capture/*` — no real sites are
+// The images use the local fixture feeds under `/capture/*`—no real sites are
 // ever fetched, so the grid is reproducible and safe to commit.
 
 import { mkdirSync } from 'node:fs';
@@ -70,7 +70,7 @@ test.describe('store screenshots', () => {
     await page.waitForTimeout(400);
   }
 
-  test('01 + 02 — populated grid, light and dark', async ({
+  test('01 + 02—populated grid, light and dark', async ({
     context,
     extensionId,
     server,
@@ -89,7 +89,7 @@ test.describe('store screenshots', () => {
     await page.screenshot({ path: resolve(outDir, '02-newtab-dark.png') });
   });
 
-  test('03 — first-run onboarding', async ({ context, extensionId }) => {
+  test('03—first-run onboarding', async ({ context, extensionId }) => {
     const page = await openNewTab(context, extensionId);
     await page.setViewportSize(SIZE);
     await page.emulateMedia({ colorScheme: 'light' });
@@ -101,7 +101,7 @@ test.describe('store screenshots', () => {
     await page.screenshot({ path: resolve(outDir, '03-onboarding.png') });
   });
 
-  test('04 — feed discovery popup', async ({
+  test('04—feed discovery popup', async ({
     context,
     extensionId,
     background,
@@ -151,7 +151,7 @@ test.describe('store screenshots', () => {
     await popup.screenshot({ path: resolve(outDir, '04-discovery.png') });
   });
 
-  test('05 — manage feeds dialog', async ({ context, extensionId, server }) => {
+  test('05—manage feeds dialog', async ({ context, extensionId, server }) => {
     const page = await openNewTab(context, extensionId);
     await page.setViewportSize(SIZE);
     await page.emulateMedia({ colorScheme: 'light' });

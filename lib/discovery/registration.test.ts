@@ -74,7 +74,7 @@ describe('registerDiscoveryScript', () => {
     });
   });
 
-  it('is idempotent — a second call does not double-register', async () => {
+  it('is idempotent—a second call does not double-register', async () => {
     await registerDiscoveryScript();
     await registerDiscoveryScript();
     expect(registry).toHaveLength(1);

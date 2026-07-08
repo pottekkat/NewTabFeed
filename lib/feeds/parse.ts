@@ -28,7 +28,7 @@ type MediaLike = NonNullable<DeepPartial<Rss.Item<string>>['media']>;
  *
  * Throws if the text isn't a recognizable feed, so callers (subscribe / refresh)
  * can treat a throw as "not a valid feed". Feed-level `id`/`url` are NOT set
- * here — the caller fills them from the URL it fetched.
+ * here—the caller fills them from the URL it fetched.
  */
 export function parseFeed(xmlOrJson: string): ParsedFeed {
   const parsed = parseFeedDocument(xmlOrJson, {
@@ -120,7 +120,7 @@ function normalizeRss(feed: RssFeed): ParsedFeed {
     const link = resolveUrl(raw.link, siteUrl);
     const guid = raw.guid?.value ?? raw.link ?? link;
     if (!guid) {
-      continue; // No identity — can't dedupe it; skip.
+      continue; // No identity—can't dedupe it; skip.
     }
     const enclosureThumb = raw.enclosures?.find((e) =>
       isImageEnclosure(e?.type, e?.url),
@@ -266,7 +266,7 @@ function normalizeJson(feed: JsonFeed): ParsedFeed {
       author: raw.authors?.[0]?.name,
       summaryHtml,
       // Structured images win; fall back to the first inline content <img>. Only
-      // content_html carries markup — content_text won't, but firstContentImage
+      // content_html carries markup—content_text won't, but firstContentImage
       // safely returns undefined for it. Resolve against the item's page first.
       thumbnailUrl: resolveUrl(
         raw.image ??
@@ -282,7 +282,7 @@ function normalizeJson(feed: JsonFeed): ParsedFeed {
       title: feed.title,
       siteUrl,
       description: feed.description,
-      // JSON Feed's `icon` is the large icon; `favicon` the small one — either works.
+      // JSON Feed's `icon` is the large icon; `favicon` the small one—either works.
       iconUrl: resolveUrl(feed.icon ?? feed.favicon, siteUrl),
     },
     items,

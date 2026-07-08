@@ -9,7 +9,7 @@ export default function App() {
   // (the inline pre-paint script in main.tsx set a sensible default already).
   useTheme(settings?.theme ?? null);
 
-  // Hold a blank canvas until settings load — a single frame, no visible flash —
+  // Hold a blank canvas until settings load—a single frame, no visible flash —
   // so we never briefly show onboarding to a returning user or vice versa.
   if (!settings) {
     return <div className="bg-background min-h-screen" />;

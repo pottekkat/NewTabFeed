@@ -65,7 +65,7 @@ function SelectContent({
         data-slot="select-content"
         className={cn(
           // No animation utilities: this repo doesn't import tw-animate-css and
-          // the Dialog primitive is unanimated too — keep the set consistent and
+          // the Dialog primitive is unanimated too—keep the set consistent and
           // free of dead classes.
           'bg-popover text-popover-foreground relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
           position === 'popper' &&

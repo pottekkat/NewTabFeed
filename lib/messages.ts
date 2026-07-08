@@ -2,7 +2,7 @@
 //
 // One discriminated union in each direction. The worker performs the mutations
 // (fetching needs the worker's host access; writes are centralized there). Pages
-// read IndexedDB directly for rendering — messages are only for actions and for
+// read IndexedDB directly for rendering—messages are only for actions and for
 // the worker to notify pages that data changed.
 
 import type { SubscribeResult } from '@/lib/feeds/refresh';
@@ -40,7 +40,7 @@ export type Response<T extends RequestType> =
   | { ok: true; data: ResponseMap[T] }
   | { ok: false; error: string; errorName?: string };
 
-/** The response type for any request — the union across all request types. */
+/** The response type for any request—the union across all request types. */
 export type AnyResponse = { [T in RequestType]: Response<T> }[RequestType];
 
 /**

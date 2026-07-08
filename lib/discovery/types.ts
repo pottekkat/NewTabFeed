@@ -1,4 +1,4 @@
-// Discovery domain types — shared by the content-script scan, the well-known
+// Discovery domain types—shared by the content-script scan, the well-known
 // path probe, session/badge state, and the popup UI.
 
 /** Broad classification of a discovered feed, for a small UI badge (rss/atom/json). */

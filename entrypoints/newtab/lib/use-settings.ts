@@ -1,7 +1,7 @@
 // React binding over the `@wxt-dev/storage` settings items.
 //
 // Loads the full snapshot once, then subscribes to each item's `.watch()` so the
-// UI reflects changes live — including changes made in another open new tab or
+// UI reflects changes live—including changes made in another open new tab or
 // the popup. Components write with the item setters re-exported below (e.g.
 // `settings.theme.setValue('dark')`); the watch pushes the new value back here.
 

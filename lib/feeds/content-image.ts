@@ -1,13 +1,13 @@
-// First-content-image extraction — runs in the service worker.
+// First-content-image extraction—runs in the service worker.
 //
 // Many feeds ship no structured thumbnail (media:thumbnail, enclosure, etc.) and
 // instead embed the cover as an inline `<img>` inside the item's content HTML
 // (content:encoded / Atom <content> / description). This module recovers that
-// image so those cards still get a cover, at zero extra network cost — the HTML
+// image so those cards still get a cover, at zero extra network cost—the HTML
 // is already in hand.
 //
 // SECURITY: the HTML here is UNTRUSTED. We only READ a single attribute value
-// out of it via regex — we never render or execute this markup. Rendering and
+// out of it via regex—we never render or execute this markup. Rendering and
 // sanitization happen later, in the newtab page, via DOMPurify. Matching favicon
 // resolution, this stays regex-only: NO DOMParser/DOM APIs (forbidden in the SW).
 
@@ -17,7 +17,7 @@ const TRACKING_SRC_RE = /(pixel|spacer|blank|1x1|tracking|beacon)/i;
 /**
  * Return the `src` of the first usable content `<img>` in an HTML string, or
  * undefined when there is none. The raw (possibly-relative) src is returned
- * verbatim — the caller resolves it against the correct base.
+ * verbatim—the caller resolves it against the correct base.
  *
  * "Usable" skips images that are clearly not content: an empty src, a `data:`
  * URI, an SVG, or an obvious tracking/spacer pixel (a `width`/`height` of 0 or 1,

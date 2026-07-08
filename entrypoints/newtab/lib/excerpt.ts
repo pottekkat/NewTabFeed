@@ -3,7 +3,7 @@
 // `FeedItem.summaryHtml` is untrusted, unsanitized HTML (the service worker has
 // no DOM and never sanitizes). We never render it as markup. Here we run it
 // through DOMPurify (which drops scripts and other dangerous nodes) and read the
-// resulting fragment's `textContent` — that discards every tag, decodes HTML
+// resulting fragment's `textContent`—that discards every tag, decodes HTML
 // entities, and yields a plain string. We then collapse whitespace and truncate.
 // React renders the result as text, so no HTML ever reaches the DOM as markup.
 //
@@ -24,7 +24,7 @@ export function excerpt(
 ): string {
   if (!html) return '';
 
-  // Sanitize to a DOM fragment, then take its text — tags stripped, scripts
+  // Sanitize to a DOM fragment, then take its text—tags stripped, scripts
   // removed, entities decoded.
   const fragment = DOMPurify.sanitize(html, { RETURN_DOM_FRAGMENT: true });
   // `textContent` concatenates with no separators, so "a</p><p>b" collapses to
@@ -34,7 +34,7 @@ export function excerpt(
   const collapsed = (fragment.textContent ?? '').replace(/\s+/g, ' ').trim();
   if (!collapsed) return '';
 
-  // Link-aggregator feeds (Lobsters, Hacker News) carry no article body — their
+  // Link-aggregator feeds (Lobsters, Hacker News) carry no article body—their
   // "description" is just a link to the discussion or a block of metadata, not
   // prose. Rendering that as an excerpt is noise (the card already opens the
   // post on click), so suppress it. Detected structurally, not per-source.
@@ -67,7 +67,7 @@ function separateBlocks(fragment: DocumentFragment): void {
 }
 
 /**
- * True when the fragment's only text lives inside links — e.g. Lobsters, whose
+ * True when the fragment's only text lives inside links—e.g. Lobsters, whose
  * item body is just `<p><a>Comments</a></p>`. Removing the anchors leaves no
  * prose behind. A real summary that merely ends in a "read more" link keeps its
  * surrounding text, so it is not suppressed.
@@ -79,7 +79,7 @@ function isLinkOnly(fragment: DocumentFragment): boolean {
 }
 
 /**
- * True when the text is only aggregator metadata, not prose — e.g. hnrss's
+ * True when the text is only aggregator metadata, not prose—e.g. hnrss's
  * "Article URL: … Comments URL: … Points: N # Comments: N". We strip URLs, the
  * known labels, and any digits/punctuation; if nothing but that remains, there
  * is no real summary to show. ("Article URL"/"Comments URL" aren't RSS fields —

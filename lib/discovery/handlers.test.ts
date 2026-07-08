@@ -48,7 +48,7 @@ afterEach(() => {
 
 const RSS = `<?xml version="1.0"?><rss version="2.0"><channel><title>Blog</title><item><title>Hi</title><link>https://blog.example.com/hi</link></item></channel></rss>`;
 
-describe('dispatch — get-discovered', () => {
+describe('dispatch—get-discovered', () => {
   it('returns the feeds a content script recorded for the tab', async () => {
     const feeds: DiscoveredFeed[] = [
       {
@@ -69,7 +69,7 @@ describe('dispatch — get-discovered', () => {
   });
 });
 
-describe('dispatch — probe-origin', () => {
+describe('dispatch—probe-origin', () => {
   it('returns parse-validated feeds from well-known paths', async () => {
     registry.set('https://blog.example.com/rss', RSS);
     const res = await dispatch({

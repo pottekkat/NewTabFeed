@@ -11,7 +11,7 @@ import type { FeedsFoundMessage } from '@/lib/messages';
 // `<all_urls>` an optional permission and avoids the install-time host warning.
 //
 // This script only READS the DOM (link[rel=alternate] feed tags) and messages
-// the worker — it never fetches (page CORS would block it; the worker fetches
+// the worker—it never fetches (page CORS would block it; the worker fetches
 // with host access). The worker keys results by sender.tab.id and lights up the
 // action badge.
 export default defineContentScript({
@@ -26,7 +26,7 @@ export default defineContentScript({
       pageUrl: location.href,
     };
     // Fire-and-forget. Rejects only if the worker is unreachable (e.g. extension
-    // reloading) — harmless to ignore.
+    // reloading)—harmless to ignore.
     void browser.runtime.sendMessage(message).catch(() => {});
   },
 });

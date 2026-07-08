@@ -30,7 +30,7 @@ const BACKOFF_MAX_MS = 6 * 60 * 60_000; // 6 hours
 const DEFAULT_CONCURRENCY = 6;
 /**
  * On first subscribe, only keep the newest N items. Later refreshes merge in
- * new items on top, so nothing is lost — this just avoids flooding a brand-new
+ * new items on top, so nothing is lost—this just avoids flooding a brand-new
  * subscription with a feed's entire back-catalogue.
  */
 const MAX_ITEMS_ON_SUBSCRIBE = 10;
@@ -153,7 +153,7 @@ export interface RefreshFeedOptions {
 /**
  * Refresh one feed: conditional GET, parse on 2xx, upsert + prune, and update
  * the feed's metadata and error state. Never throws for network/parse problems
- * — those are captured into the feed's error state and returned as a
+ *—those are captured into the feed's error state and returned as a
  * `status: 'error'` outcome so one bad feed can't break a batch. Genuinely
  * exceptional conditions (missing feed, missing host permission) still throw.
  */
@@ -175,7 +175,7 @@ export async function refreshFeed(
     });
   } catch (err) {
     if (err instanceof NoHostPermissionError) {
-      throw err; // Not a per-feed failure — the whole batch can't proceed.
+      throw err; // Not a per-feed failure—the whole batch can't proceed.
     }
     await recordFailure(feed, err);
     return { feedId, status: 'error', message: errorMessage(err) };
@@ -202,7 +202,7 @@ export async function refreshFeed(
 
   const siteUrl = resolveUrl(parsed.feed.siteUrl, feed.url) ?? feed.siteUrl;
   // Cache favicon bytes locally. Only (re)resolve when we don't already hold a
-  // cached data URL — this avoids refetching every refresh while migrating
+  // cached data URL—this avoids refetching every refresh while migrating
   // feeds whose iconUrl is still empty or a remote URL to local bytes.
   const iconUrl = feed.iconUrl?.startsWith('data:')
     ? feed.iconUrl
@@ -358,7 +358,7 @@ function hostnameOf(url: string): string {
 
 /**
  * Run `worker` over `items` with at most `concurrency` in flight. Preserves
- * input order in the returned results. A simple index-sharing pool — no
+ * input order in the returned results. A simple index-sharing pool—no
  * dependency needed.
  */
 async function runPool<T, R>(

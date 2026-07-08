@@ -4,8 +4,8 @@ import { openNewTab, onboardWithFeed } from './helpers';
 // Link-preview enrichment, verified through the full pipeline. `/preview.xml`
 // carries two items that both link at `/og-article` (a page advertising
 // og:image + og:description). "Needs preview" ships no cover and a link-only
-// (thin) body, so the service worker's enrichment pass — which runs AFTER
-// subscribe/refresh and then re-broadcasts `feeds-updated` — must fetch the
+// (thin) body, so the service worker's enrichment pass—which runs AFTER
+// subscribe/refresh and then re-broadcasts `feeds-updated`—must fetch the
 // article and fill both the cover and the excerpt. "Has own cover" already has
 // an inline image and real prose, so enrichment must leave it untouched. With
 // the setting off, no item is enriched at all.
@@ -24,7 +24,7 @@ test('enrichment fills a missing cover and excerpt from the linked article', asy
   const needsPreview = card(page, 'Needs preview');
 
   // Enrichment is async (post-subscribe, then a re-broadcast), so the cover and
-  // excerpt fill in progressively — allow a generous timeout.
+  // excerpt fill in progressively—allow a generous timeout.
   await expect(
     needsPreview.locator(`img[src="${server.url}/cover.png"]`),
   ).toBeVisible({ timeout: 15_000 });

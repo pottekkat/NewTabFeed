@@ -38,7 +38,7 @@ export async function onboardWithFeed(
 ): Promise<void> {
   // Uncheck every pre-selected starter feed so onboarding only subscribes to the
   // fixture (never a real site). First wait for onboarding to hydrate with its
-  // pre-checked starters — counting before they render would uncheck nothing and
+  // pre-checked starters—counting before they render would uncheck nothing and
   // leave real feeds selected. Re-query the shrinking `:checked` set each loop.
   const checked = page.locator('input[type="checkbox"]:checked');
   await expect(checked).not.toHaveCount(0);
@@ -84,7 +84,7 @@ export function badgeText(background: Worker, tabId: number): Promise<string> {
 /**
  * Wait until the discovery content script is registered. The background worker
  * registers it on install (host access is present in the e2e build), but that's
- * async — pages opened before it lands won't be scanned.
+ * async—pages opened before it lands won't be scanned.
  */
 export async function waitForDiscoveryRegistered(
   background: Worker,
