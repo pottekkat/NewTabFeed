@@ -25,7 +25,11 @@ test('an advertised feed lights the badge and subscribes from the popup', async 
 
   const popup = await openPopup(context, extensionId, tabId);
   await expect(popup.getByText('E2E Fixture Feed')).toBeVisible();
-  await popup.getByRole('button', { name: 'Subscribe' }).click();
+  const subscribeBtn = popup.getByRole('button', { name: 'Subscribe' });
+  // Interactive controls must show the pointer cursor — Tailwind v4's preflight
+  // resets <button> to `cursor: default`, so a base rule restores it.
+  await expect(subscribeBtn).toHaveCSS('cursor', 'pointer');
+  await subscribeBtn.click();
   await expect(popup.getByText('Subscribed')).toBeVisible();
 });
 

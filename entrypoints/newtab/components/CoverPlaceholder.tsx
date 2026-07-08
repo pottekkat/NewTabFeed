@@ -57,11 +57,12 @@ export function CoverPlaceholder({
       data-slot="cover-placeholder"
       aria-hidden="true"
       style={{ backgroundImage }}
-      // Match the real cover's edge-bleed and geometry exactly (counter the
-      // p-4 padding, flush top, matching top rounding) so swapping one for the
-      // other is seamless.
+      // Match the real cover's geometry exactly (full-width 16:9, flush to the
+      // card edges via the card's own clip) so one can stand in for the other
+      // without any visible shift. No margins or rounding of its own; the card
+      // handles both.
       className={cn(
-        'bg-muted -mx-4 -mt-4 flex aspect-video w-[calc(100%+2rem)] items-center justify-center rounded-t-xl',
+        'bg-muted flex aspect-video w-full items-center justify-center',
         className,
       )}
     >

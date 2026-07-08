@@ -70,21 +70,22 @@ function ItemCardImpl({
       data-slot="item-card"
       data-read={item.read}
       className={cn(
-        'group bg-card text-card-foreground focus-visible:ring-ring/50 flex flex-col rounded-xl border shadow-sm transition-colors outline-none hover:border-orange-500/40 focus-visible:ring-[3px]',
-        compact ? 'gap-1.5 p-3' : 'gap-2 p-4',
+        'group bg-card text-card-foreground focus-visible:ring-ring/50 flex flex-col overflow-hidden rounded-xl border shadow-sm transition-colors outline-none hover:border-orange-500/40 focus-visible:ring-[3px]',
         item.read && 'opacity-60 hover:opacity-100',
       )}
     >
       {showCover && (
-        // Bleed to the card's edges (counter the p-4 padding) so the cover sits
-        // flush against the top; top corners match the card's rounding.
+        // Full-bleed by construction: the card clips (overflow-hidden +
+        // rounded-xl) and carries no padding, so a plain w-full image sits flush
+        // to the edges. object-cover crops any source resolution into the fixed
+        // 16:9 box, giving every card a uniform cover height.
         <img
           src={item.thumbnailUrl}
           alt=""
           aria-hidden="true"
           loading="lazy"
           onError={() => setCoverErrored(true)}
-          className="-mx-4 -mt-4 aspect-video w-[calc(100%+2rem)] rounded-t-xl object-cover"
+          className="aspect-video w-full object-cover"
         />
       )}
 
@@ -92,42 +93,47 @@ function ItemCardImpl({
         <CoverPlaceholder seed={coverSeed(item)} label={sourceName} />
       )}
 
-      <div className="text-muted-foreground flex items-center gap-2 text-xs">
-        <Favicon siteUrl={siteUrl} iconUrl={iconUrl} fallback={sourceName} />
-        <span className="truncate font-medium">{sourceName}</span>
-        <span aria-hidden="true">·</span>
-        <time
-          dateTime={new Date(item.publishedAt).toISOString()}
-          title={absoluteTime(item.publishedAt)}
-          className="shrink-0 tabular-nums"
+      {/* Padding lives on the body, not the card, so the cover can bleed. */}
+      <div
+        className={cn('flex flex-col', compact ? 'gap-1.5 p-3' : 'gap-2 p-4')}
+      >
+        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+          <Favicon siteUrl={siteUrl} iconUrl={iconUrl} fallback={sourceName} />
+          <span className="truncate font-medium">{sourceName}</span>
+          <span aria-hidden="true">·</span>
+          <time
+            dateTime={new Date(item.publishedAt).toISOString()}
+            title={absoluteTime(item.publishedAt)}
+            className="shrink-0 tabular-nums"
+          >
+            {relativeTime(item.publishedAt)}
+          </time>
+          {!item.read && (
+            <span
+              aria-label="Unread"
+              className="ml-auto size-2 shrink-0 rounded-full bg-orange-500"
+            />
+          )}
+        </div>
+
+        <h3
+          className={cn(
+            'line-clamp-2 font-semibold text-balance',
+            compact ? 'text-sm' : 'text-[15px] leading-snug',
+          )}
         >
-          {relativeTime(item.publishedAt)}
-        </time>
-        {!item.read && (
-          <span
-            aria-label="Unread"
-            className="ml-auto size-2 shrink-0 rounded-full bg-orange-500"
-          />
+          {item.title}
+        </h3>
+
+        {summary && (
+          <p
+            data-slot="item-excerpt"
+            className="text-muted-foreground line-clamp-3 text-sm leading-relaxed"
+          >
+            {summary}
+          </p>
         )}
       </div>
-
-      <h3
-        className={cn(
-          'line-clamp-2 font-semibold text-balance',
-          compact ? 'text-sm' : 'text-[15px] leading-snug',
-        )}
-      >
-        {item.title}
-      </h3>
-
-      {summary && (
-        <p
-          data-slot="item-excerpt"
-          className="text-muted-foreground line-clamp-3 text-sm leading-relaxed"
-        >
-          {summary}
-        </p>
-      )}
     </a>
   );
 }

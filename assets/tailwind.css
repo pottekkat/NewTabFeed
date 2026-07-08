@@ -116,4 +116,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Tailwind v4's preflight resets <button> to `cursor: default` (v3 used
+     `pointer`). Restore the pointer on interactive controls so buttons, the
+     shadcn Button, Radix Switch/Select triggers, and every raw <button> feel
+     clickable. Utilities like `cursor-default`/`disabled:cursor-not-allowed`
+     still win by specificity, and `:not(:disabled)` keeps disabled controls on
+     the default arrow. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }
