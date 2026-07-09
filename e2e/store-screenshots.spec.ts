@@ -181,8 +181,9 @@ test.describe('store screenshots', () => {
     // Capture the popup card on its own and the page behind it, then composite:
     // the page becomes a dimmed backdrop and the popup floats under the toolbar
     // icon, the way the extension actually presents it.
-    const popupShot = (await popup.locator('#root > div').first().screenshot())
-      .toString('base64');
+    const popupShot = (
+      await popup.locator('#root > div').first().screenshot()
+    ).toString('base64');
     await pageTab.waitForTimeout(400);
     const backdrop = await captureBase64(pageTab);
 

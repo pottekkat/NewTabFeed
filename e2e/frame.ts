@@ -61,7 +61,10 @@ const icons = {
   lock: '<rect x="3.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M6 7V5a3 3 0 016 0v2"/>',
 };
 
-function svg(path: string, opts: { fill?: boolean; color?: string } = {}): string {
+function svg(
+  path: string,
+  opts: { fill?: boolean; color?: string } = {},
+): string {
   const stroke = opts.fill ? 'none' : 'currentColor';
   const fill = opts.fill ? 'currentColor' : 'none';
   const color = opts.color ? `color:${opts.color};` : '';
