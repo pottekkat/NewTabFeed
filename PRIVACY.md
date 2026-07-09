@@ -1,9 +1,9 @@
 # Privacy Policy
 
-_Last updated: 2026-07-08_
+_Last updated: 2026-07-09_
 
 NewTabFeed is a local-first RSS reader. It is built so that your data stays on
-your device. This document explains, honestly, what it does and does not do.
+your device. This document explains what it does and does not do.
 
 ## What NewTabFeed stores
 
@@ -38,8 +38,7 @@ To show a feed's favicon, NewTabFeed fetches the icon from that feed's own site
 (its homepage `<link>` tags or `/favicon.ico`) and caches it locally. These
 requests carry no cookies, and no third-party icon service is ever contacted.
 
-That's the complete list. There are no requests to NewTabFeed servers, because
-there are none.
+That's the complete list.
 
 ## What NewTabFeed does not do
 

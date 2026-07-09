@@ -4,7 +4,7 @@ A local-first RSS reader that replaces Chrome's new tab page. Your feeds stay on
 
 NewTabFeed shows your RSS, Atom, RDF, and JSON feeds newest-first every time you open a tab. You pick every source. Items appear in the order they were published, with no ranking, no algorithm, and no promoted posts. Open a tab, read what's new, get on with your day.
 
-Everything stays in your browser. Subscriptions and read state live in IndexedDB, there are no accounts and no sync servers, and you can import and export your whole subscription list as OPML whenever you want. See [PRIVACY.md](./PRIVACY.md).
+Everything stays in your browser. Subscriptions and read state live in IndexedDB, and you can import or export the whole subscription list as OPML whenever you want.
 
 ## Features
 
@@ -12,7 +12,7 @@ Everything stays in your browser. Subscriptions and read state live in IndexedDB
 - A card-grid new tab with favicons, source, and relative time, in a comfortable or compact density.
 - First-run onboarding with a curated set of starter feeds, all opt-in.
 - Add feeds by URL, or discover them from the site you're on. The toolbar icon lights up when the current page advertises a feed, and can probe common feed locations when it doesn't.
-- Optional link previews. When an item ships no image or only a thin summary (common with link aggregators like Hacker News and Lobsters), NewTabFeed fetches the linked article once to pull a cover image and description from its page. On by default, and you can turn it off in Settings.
+- Optional link previews: when an item ships no image or only a thin summary, as link aggregators like Hacker News and Lobsters tend to, NewTabFeed fetches the linked article once for a cover image and description. On by default; turn it off in Settings.
 - OPML import and export.
 - Per-feed filtering, unread-only view, and mark-all-read.
 - Background refresh on a schedule you set, with light and dark themes.

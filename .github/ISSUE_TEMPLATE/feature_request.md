@@ -14,7 +14,7 @@ us find a fix that fits. -->
 #### What problem are you trying to solve?
 
 <!-- Describe the situation or frustration, not just the feature. What are you
-trying to do that NewTabFeed does not let you do today? -->
+trying to do that NewTabFeed doesn't let you do today? -->
 
 #### What would you like to happen?
 

@@ -8,9 +8,9 @@ Please be kind. Everyone here follows the [Code of Conduct](./CODE_OF_CONDUCT.md
 
 NewTabFeed is deliberately small. It replaces the new tab with a newest-first reader for your feeds, and stores everything on your device: no accounts, no cloud, no sync servers, no telemetry, no ads. That constraint is the point, and it shapes what belongs here.
 
-Some things will be declined by design. Anything that adds cloud services, accounts, sync backends, analytics, tracking, or ranking algorithms works against the local-first, private-by-default goal. Big new features can also pull the project toward bloat, which is the thing we most want to avoid.
+Some things will be declined by design. Anything that adds cloud services, accounts, sync backends, analytics, tracking, or ranking algorithms works against the local-first, private-by-default goal. Big features pull the project toward bloat, which is what we most want to avoid.
 
-So before you write code for anything beyond a small fix, open an issue and describe the problem you want to solve. That saves you from building something that does not fit, and it gives us a chance to agree on the shape first.
+So before you write code for anything beyond a small fix, open an issue and describe the problem you want to solve. That saves you from building something that doesn't fit, and it gives us a chance to agree on the shape first.
 
 ## Reporting bugs
 
@@ -21,11 +21,11 @@ Open a [bug report](https://github.com/pottekkat/NewTabFeed/issues/new/choose) a
 - Your Chrome version, OS, and the NewTabFeed version.
 - Any console errors or a screenshot, if you have them.
 
-If a feed does not parse, the feed URL helps a lot, since we can test against it.
+If a feed doesn't parse, the feed URL helps a lot, since we can test against it.
 
 ## Requesting features
 
-Open a [feature request](https://github.com/pottekkat/NewTabFeed/issues/new/choose) and describe the problem behind the idea, not just the feature. Knowing what you are trying to do lets us find a solution that fits the small, local-first design, or explain why it does not.
+Open a [feature request](https://github.com/pottekkat/NewTabFeed/issues/new/choose) and describe the problem behind the idea, not just the feature. Knowing what you're trying to do lets us find a solution that fits the small, local-first design, or explain why it doesn't.
 
 ## Development setup
 
@@ -89,4 +89,4 @@ pnpm test:e2e
 
 Then open a pull request, link the issue it addresses, and fill in the template. Keep the change focused: one concern per PR is easier to review than a large mixed one. CI runs these checks on every PR, so anything red will need a fix before merge.
 
-Releases are cut by maintainers by pushing a `v*` tag, so you do not need to bump versions in your PR. See [docs/RELEASING.md](./docs/RELEASING.md) if you are curious how that works.
+Maintainers cut releases by pushing a `v*` tag, so you don't need to bump versions in your PR. See [docs/RELEASING.md](./docs/RELEASING.md) if you're curious how that works.
