@@ -106,10 +106,20 @@ test.describe('store screenshots', () => {
     await onboardWithStarterFeeds(page);
     await waitForGrid(page);
 
+    // One light-theme capture feeds both the store card and the README hero.
+    const lightShot = await captureBase64(page);
     await renderFramedShot(context, resolve(outDir, '01-newtab-light.png'), {
-      innerPngBase64: await captureBase64(page),
+      innerPngBase64: lightShot,
       theme: 'light',
       headline: { base: 'Every new tab is', accent: 'your reading list' },
+    });
+
+    // README hero: the same window, but bare (no headline, no backdrop) on a
+    // transparent canvas so it sits on GitHub's page rather than a store card.
+    await renderFramedShot(context, resolve(outDir, '../hero.png'), {
+      innerPngBase64: lightShot,
+      theme: 'light',
+      bare: true,
     });
 
     await page.emulateMedia({ colorScheme: 'dark' });

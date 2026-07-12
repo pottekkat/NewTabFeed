@@ -18,6 +18,10 @@ const WINDOW = { left: 176, top: 100, width: 928, height: 656 } as const;
 const TITLEBAR = 20;
 const TOOLBAR = 56;
 
+// In `bare` mode there's no backdrop, so the canvas is just the window plus a
+// margin wide enough for its drop shadow to fall on the transparent background.
+const SHADOW_PAD = 72;
+
 export type Theme = 'light' | 'dark';
 
 export interface Headline {
@@ -31,7 +35,8 @@ export interface FrameOptions {
   /** PNG of the real app UI, shown inside the window. Base64 (no data: prefix). */
   innerPngBase64: string;
   theme: Theme;
-  headline: Headline;
+  /** The headline above the window. Omit in `bare` mode, which has no headline. */
+  headline?: Headline;
   /** URL-bar text. Omit for a new-tab shot, which shows a search omnibox. */
   url?: string;
   /**
@@ -39,6 +44,12 @@ export interface FrameOptions {
    * dimmed backdrop (for the discovery shot). Base64 PNG, no data: prefix.
    */
   overlayPngBase64?: string;
+  /**
+   * Bare mode: just the mock window on a transparent canvas, with no headline
+   * and no branded backdrop. Used for the README hero, which sits on GitHub's
+   * own page background rather than a store card.
+   */
+  bare?: boolean;
 }
 
 const BRAND = '#f97316';
@@ -140,21 +151,33 @@ function buildHtml(opts: FrameOptions): string {
     : '';
   const dimClass = opts.overlayPngBase64 ? ' dimmed' : '';
 
+  // Bare mode drops the backdrop and headline and sizes the canvas to the window
+  // plus a shadow margin; the framed store shot fills the full 1280x800 card.
+  const pageW = opts.bare ? WINDOW.width + SHADOW_PAD * 2 : WIDTH;
+  const pageH = opts.bare ? WINDOW.height + SHADOW_PAD * 2 : HEIGHT;
+  const winLeft = opts.bare ? SHADOW_PAD : WINDOW.left;
+  const winTop = opts.bare ? SHADOW_PAD : WINDOW.top;
+  const bodyBg = opts.bare ? 'transparent' : p.pageBg;
+  const headlineHtml =
+    opts.bare || !opts.headline
+      ? ''
+      : `<div class="headline">${opts.headline.base} <span class="accent">${opts.headline.accent}</span></div>`;
+
   return `<!doctype html><html><head><meta charset="utf-8"/><style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
-    width: ${WIDTH}px; height: ${HEIGHT}px; overflow: hidden;
+    width: ${pageW}px; height: ${pageH}px; overflow: hidden;
     font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  body { position: relative; background: ${p.pageBg}; }
+  body { position: relative; background: ${bodyBg}; }
   .headline {
     position: absolute; top: 36px; left: 0; right: 0; text-align: center;
     font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: ${p.headline};
   }
   .headline .accent { color: ${accent}; }
   .window {
-    position: absolute; left: ${WINDOW.left}px; top: ${WINDOW.top}px;
+    position: absolute; left: ${winLeft}px; top: ${winTop}px;
     width: ${WINDOW.width}px; height: ${WINDOW.height}px;
     border-radius: 13px; overflow: hidden;
     background: ${p.contentBg};
@@ -198,7 +221,7 @@ function buildHtml(opts: FrameOptions): string {
     box-shadow: 0 24px 60px rgba(9,13,22,0.42);
   }
   </style></head><body>
-    <div class="headline">${opts.headline.base} <span class="accent">${opts.headline.accent}</span></div>
+    ${headlineHtml}
     <div class="window">
       <div class="titlebar"></div>
       <div class="toolbar">
@@ -214,18 +237,21 @@ function buildHtml(opts: FrameOptions): string {
 }
 
 /**
- * Composite a framed 1280x800 store shot and save it to `outPath`. Renders the
- * mock-browser HTML on a throwaway page, waits for the embedded images to
- * decode, then screenshots the viewport.
+ * Composite a mock-browser shot and save it to `outPath`. The default is a
+ * framed 1280x800 store card; `opts.bare` renders just the window on a
+ * transparent canvas (README hero). Renders the HTML on a throwaway page, waits
+ * for the embedded images to decode, then screenshots the viewport.
  */
 export async function renderFramedShot(
   context: BrowserContext,
   outPath: string,
   opts: FrameOptions,
 ): Promise<void> {
+  const width = opts.bare ? WINDOW.width + SHADOW_PAD * 2 : WIDTH;
+  const height = opts.bare ? WINDOW.height + SHADOW_PAD * 2 : HEIGHT;
   const page = await context.newPage();
   try {
-    await page.setViewportSize({ width: WIDTH, height: HEIGHT });
+    await page.setViewportSize({ width, height });
     await page.setContent(buildHtml(opts), { waitUntil: 'load' });
     // Ensure both the app capture and any overlay have decoded before shooting.
     await page.evaluate(() =>
@@ -233,7 +259,9 @@ export async function renderFramedShot(
         [...document.images].map((img) => img.decode().catch(() => {})),
       ),
     );
-    await page.screenshot({ path: outPath });
+    // Bare mode keeps the canvas transparent so the window's shadow blends onto
+    // whatever page it's embedded in.
+    await page.screenshot({ path: outPath, omitBackground: opts.bare });
   } finally {
     await page.close();
   }
