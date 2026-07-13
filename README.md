@@ -2,7 +2,7 @@
 
 ![NewTabFeed replacing the new tab page with a feed of recent articles](./docs/hero.png)
 
-A local-first RSS reader that replaces Chrome's new tab page. Your feeds stay on your device: no accounts, no cloud, no ads.
+A local-first RSS reader in your new tab.
 
 NewTabFeed shows your RSS, Atom, RDF, and JSON feeds newest-first every time you open a tab. You pick every source. Items appear in the order they were published, with no ranking, no algorithm, and no promoted posts. Open a tab, read what's new, get on with your day.
 

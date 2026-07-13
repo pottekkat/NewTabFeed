@@ -8,7 +8,7 @@ with each release.
 **Name:** NewTabFeed
 
 **Summary (132 chars max):**
-A local-first RSS reader in your new tab. Your feeds, newest-first, with no accounts, no cloud, no ads.
+A local-first RSS reader in your new tab.
 
 **Category:** Productivity
 

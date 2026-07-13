@@ -14,8 +14,7 @@ export default defineConfig({
   imports: false,
   manifest: {
     name: 'NewTabFeed',
-    description:
-      'A local-first RSS reader in your new tab. Your feeds, on your device—no accounts, no cloud, no ads.',
+    description: 'A local-first RSS reader in your new tab.',
     // `scripting` is needed to register the feed-discovery content script at
     // runtime (see lib/discovery/registration.ts). `<all_urls>` stays OPTIONAL
     // (below), granted once at onboarding—never required at install.

@@ -1,6 +1,6 @@
 {
   "name": "newtabfeed",
-  "description": "A local-first RSS reader in your new tab. Your feeds, on your device—no accounts, no cloud, no ads.",
+  "description": "A local-first RSS reader in your new tab.",
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",

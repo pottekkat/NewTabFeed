@@ -2,8 +2,8 @@
 
 _Last updated: 2026-07-09_
 
-NewTabFeed is a local-first RSS reader. It is built so that your data stays on
-your device. This document explains what it does and does not do.
+NewTabFeed is a local-first RSS reader. This document explains what it does and
+does not do.
 
 ## What NewTabFeed stores
 
