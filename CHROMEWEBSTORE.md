@@ -3,6 +3,9 @@
 Prep and copy for the NewTabFeed Chrome Web Store submission. Keep this in sync
 with each release.
 
+Published at
+<https://chromewebstore.google.com/detail/egiknghfofcepecblibbgdbncjmgglgj>.
+
 ## Listing
 
 **Name:** NewTabFeed

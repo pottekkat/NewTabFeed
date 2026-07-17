@@ -4,6 +4,8 @@
 
 A local-first RSS reader in your new tab.
 
+[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/egiknghfofcepecblibbgdbncjmgglgj)
+
 NewTabFeed shows your RSS, Atom, RDF, and JSON feeds newest-first every time you open a tab. You pick every source. Items appear in the order they were published, with no ranking, no algorithm, and no promoted posts. Open a tab, read what's new, get on with your day.
 
 Everything stays in your browser. Subscriptions and read state live in IndexedDB, and you can import or export the whole subscription list as OPML whenever you want.
@@ -21,9 +23,9 @@ Everything stays in your browser. Subscriptions and read state live in IndexedDB
 
 ## Install
 
-Chrome Web Store: coming soon.
+Install NewTabFeed from the [Chrome Web Store](https://chromewebstore.google.com/detail/egiknghfofcepecblibbgdbncjmgglgj), then open a new tab to start onboarding.
 
-To load it unpacked today:
+To build and load it unpacked instead:
 
 1. `pnpm install && pnpm build`
 2. Open `chrome://extensions` and enable **Developer mode**.
