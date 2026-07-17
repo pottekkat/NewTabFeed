@@ -91,6 +91,8 @@ reproducible byte-for-byte. Re-run when the listing needs a refresh.
 
 ## Version history
 
+- **0.1.1:** Copy only. The manifest description is now the one-line tagline,
+  "A local-first RSS reader in your new tab." No functional change.
 - **0.1.0:** Initial release. On-device RSS/Atom/RDF/JSON reading in the new tab,
   onboarding with starter feeds, feed discovery and well-known-path probing,
   optional link previews, OPML import and export, per-feed and unread-only
